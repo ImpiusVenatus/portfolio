@@ -243,15 +243,18 @@ export default function Hero() {
     const software = softwareRef.current;
     const dev = devRef.current;
     const center = centerBadgeRef.current;
+    const card = cardRef.current;
     if (!software || !dev || !center) return;
 
     gsap.set([software, dev, center], { autoAlpha: 0, filter: "blur(12px)" });
+    if (card) gsap.set(card, { autoAlpha: 0, filter: "blur(12px)" });
 
     const runEntry = () => {
       const tl = gsap.timeline();
       tl.to(center, { autoAlpha: 1, filter: "blur(0px)", duration: 0.7, ease: "power2.out" }, 0.15);
       tl.to(software, { autoAlpha: 1, filter: "blur(0px)", duration: 0.9, ease: "power2.out" }, 0.25);
       tl.to(dev, { autoAlpha: 1, filter: "blur(0px)", duration: 0.9, ease: "power2.out" }, 0.4);
+      if (card) tl.to(card, { autoAlpha: 1, filter: "blur(0px)", duration: 0.8, ease: "power2.out" }, 0.2);
     };
 
     if (typeof window !== "undefined" && sessionStorage.getItem("preloaderDone")) {
@@ -292,14 +295,16 @@ export default function Hero() {
                 </p>
               </div>
 
-              <Image
-                src="/icons/hero-bracket.svg"
-                alt=""
-                width={50}
-                height={80}
-                className="opacity-90 hero-bracket-jiggle-right"
-                priority
-              />
+              <div className="rotate-180 hero-bracket-jiggle inline-block">
+                <Image
+                  src="/icons/hero-bracket.svg"
+                  alt=""
+                  width={50}
+                  height={80}
+                  className="opacity-90 block"
+                  priority
+                />
+              </div>
             </div>
           </div>
 
