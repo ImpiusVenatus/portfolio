@@ -136,3 +136,79 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes pulse-ring {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2s ease-in-out infinite;
+}
+
+/* Back to top: expanding ring that grows and fades */
+@keyframes back-to-top-pulse {
+  0% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2);
+  }
+}
+
+.animate-back-to-top-pulse {
+  animation: back-to-top-pulse 1.8s ease-out infinite;
+}
+
+/* Hero center brackets: noticeable jiggle once periodically (both brackets) */
+@keyframes hero-bracket-jiggle {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  8% {
+    transform: scale(1.08) rotate(4deg);
+  }
+  16% {
+    transform: scale(1) rotate(0deg);
+  }
+  24% {
+    transform: scale(1.06) rotate(-3deg);
+  }
+  32% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes hero-bracket-jiggle-right {
+  0%, 100% {
+    transform: scale(1) rotate(180deg);
+  }
+  8% {
+    transform: scale(1.08) rotate(184deg);
+  }
+  16% {
+    transform: scale(1) rotate(180deg);
+  }
+  24% {
+    transform: scale(1.06) rotate(177deg);
+  }
+  32% {
+    transform: scale(1) rotate(180deg);
+  }
+}
+
+.hero-bracket-jiggle {
+  animation: hero-bracket-jiggle 3s ease-in-out infinite;
+}
+
+.hero-bracket-jiggle-right {
+  animation: hero-bracket-jiggle-right 3s ease-in-out infinite;
+}
