@@ -1,8 +1,12 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { dmMono, spaceGrotesk } from "@/app/layout";
+
+gsap.registerPlugin(ScrollTrigger);
 
 type Service = {
   id: string;
@@ -68,7 +72,7 @@ function ProgressRing({
       </svg>
 
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className={`text-[10px] tracking-[0.28em] text-white/45 ${dmMono.className}`}>PROJECT</div>
+        <div className={`text-[10px] tracking-[0.28em] text-white/45 ${dmMono.className}`}>SERVICES</div>
         <div className={`mt-1 text-white/80 ${dmMono.className} tracking-widest`}>
           {String(value).padStart(2, "0")} <span className="text-white/30">|</span> {String(total).padStart(2, "0")}
         </div>
@@ -165,14 +169,26 @@ export default function ServicesSection() {
   );
 
   const [active, setActive] = useState(0);
+  // Autoplay: false = playing (default ON). Set to true for autoplay OFF by default.
   const [paused, setPaused] = useState(false);
+  const AUTOPLAY_INTERVAL_MS = 5500;
 
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const pillRef = useRef<HTMLDivElement | null>(null);
   const cardRef = useRef<HTMLDivElement | null>(null);
+  const serviceLineRef = useRef<HTMLDivElement | null>(null);
+  const progressWrapRef = useRef<HTMLDivElement | null>(null);
+  const arrowsRef = useRef<HTMLDivElement | null>(null);
+  const pauseRef = useRef<HTMLDivElement | null>(null);
 
   const progressCircleRef = useRef<SVGCircleElement | null>(null);
   const autoplayRef = useRef<number | null>(null);
+  const hasEnteredRef = useRef(false);
+  const hasAutoLockedRef = useRef(false);
+  const prevActiveRef = useRef<number | null>(null); // null = first mount, then 0..n-1
+  const entranceTlRef = useRef<gsap.core.Timeline | null>(null);
+  const carouselTlRef = useRef<gsap.core.Timeline | null>(null);
 
   const clampIndex = (i: number) => {
     const n = services.length;
@@ -182,33 +198,166 @@ export default function ServicesSection() {
   const goNext = () => setActive((v) => clampIndex(v + 1));
   const goPrev = () => setActive((v) => clampIndex(v - 1));
 
-  // ✅ animate content swap
+  // Carousel: on slide change (arrow tap), animate left content + pill, line, then dots/rows one by one
+  useLayoutEffect(() => {
+    if (prevActiveRef.current === active) return;
+    const isFirstRun = prevActiveRef.current === null;
+    prevActiveRef.current = active;
+    if (isFirstRun) return;
+
+    const contentEl = contentRef.current;
+    const pillEl = pillRef.current;
+    const lineEl = serviceLineRef.current;
+    const cardEl = cardRef.current;
+    if (!contentEl || !pillEl || !lineEl || !cardEl) return;
+
+    const rafId = requestAnimationFrame(() => {
+      const rows = Array.from(cardEl.querySelectorAll<HTMLElement>("[data-service-row]"));
+      gsap.killTweensOf([contentEl, pillEl, lineEl, ...rows]);
+
+      const tl = gsap.timeline();
+      tl.fromTo(
+        [pillEl, contentEl],
+        { autoAlpha: 0, y: 14, filter: "blur(12px)" },
+        { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.42, ease: "power2.out", stagger: 0.06 },
+        0
+      );
+      tl.fromTo(
+        lineEl,
+        { scaleY: 0, transformOrigin: "top center" },
+        { scaleY: 1, duration: 0.55, ease: "power2.out" },
+        0.1
+      );
+      rows.forEach((row, i) => {
+        tl.fromTo(
+          row,
+          { autoAlpha: 0, y: 12 },
+          { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" },
+          0.58 + i * 0.22
+        );
+      });
+      carouselTlRef.current = tl;
+    });
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      carouselTlRef.current?.kill();
+      carouselTlRef.current = null;
+    };
+  }, [active]);
+
+  // ✅ Scroll-triggered entrance: section pins when fully in view, then left → right (line + dots/rows) → nav elements
   useEffect(() => {
+    const wrapper = wrapperRef.current;
     const contentEl = contentRef.current;
     const pillEl = pillRef.current;
     const cardEl = cardRef.current;
-    if (!contentEl || !pillEl || !cardEl) return;
+    const progressWrap = progressWrapRef.current;
+    const arrowsEl = arrowsRef.current;
+    const pauseEl = pauseRef.current;
+    if (
+      !wrapper ||
+      !contentEl ||
+      !pillEl ||
+      !cardEl ||
+      !progressWrap ||
+      !arrowsEl ||
+      !pauseEl
+    )
+      return;
 
-    gsap.killTweensOf([contentEl, pillEl, cardEl]);
+    // No initial hide — section is visible on load; entrance only runs when scroll triggers it
+    const entranceTl = gsap.timeline({ paused: true });
 
-    const tl = gsap.timeline();
-    tl.fromTo(
-      [pillEl, contentEl],
-      { autoAlpha: 0, y: 14, filter: "blur(12px)" },
-      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.42, ease: "power2.out", stagger: 0.06 },
-      0
+    // Entrance: left content + nav only. Right block (card, line, rows) is NEVER touched by GSAP here — always visible.
+    entranceTl.to(contentEl, {
+      autoAlpha: 1,
+      y: 0,
+      duration: 0.5,
+      ease: "power2.out",
+    }, 0);
+
+    // Progress, pill, arrows, pause
+    entranceTl.to(
+      [progressWrap, pillEl, arrowsEl, pauseEl],
+      { autoAlpha: 1, duration: 0.35, stagger: 0.06, ease: "power2.out" },
+      0.5
     );
-    tl.fromTo(
-      cardEl,
-      { autoAlpha: 0, y: 10, filter: "blur(10px)" },
-      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.42, ease: "power2.out" },
-      0.08
-    );
+    entranceTlRef.current = entranceTl;
+
+    // If section is already in view on load (e.g. refresh), run entrance so content shows
+    const checkAlreadyInView = () => {
+      if (hasEnteredRef.current) return;
+      const top = wrapper.getBoundingClientRect().top;
+      if (top < window.innerHeight * 0.6) {
+        hasEnteredRef.current = true;
+        hasAutoLockedRef.current = true;
+        entranceTl.play();
+      }
+    };
+    const inViewTimeout = window.setTimeout(checkAlreadyInView, 200);
+
+    // Auto-scroll so section fully enters viewport (one-time; no manual scroll needed)
+    const scrollToLockSection = () => {
+      if (hasAutoLockedRef.current) return;
+      hasAutoLockedRef.current = true;
+      const targetY = window.scrollY + wrapper.getBoundingClientRect().top;
+      window.scrollTo({ top: targetY, behavior: "smooth" });
+      // If pin's onEnter doesn't fire (e.g. scroll ends slightly off), run entrance after scroll settles
+      setTimeout(() => {
+        if (hasEnteredRef.current) return;
+        const wr = wrapperRef.current;
+        if (wr && wr.getBoundingClientRect().top < 150) {
+          hasEnteredRef.current = true;
+          entranceTlRef.current?.play();
+        }
+      }, 900);
+    };
+
+    // Trigger 1: when Hero section leaves view (most reliable - user has scrolled past hero)
+    const heroEl = document.getElementById("hero");
+    const heroSt = heroEl
+      ? ScrollTrigger.create({
+          trigger: heroEl,
+          start: "bottom top",
+          onEnter: scrollToLockSection,
+        })
+      : null;
+
+    // Trigger 2: when services section starts to enter viewport (earlier = "top 90%")
+    const lockSt = ScrollTrigger.create({
+      trigger: wrapper,
+      start: "top 90%",
+      onEnter: scrollToLockSection,
+    });
+
+    // Trigger 3: when Hero timeline completes
+    window.addEventListener("hero:complete", scrollToLockSection);
+
+    // When section reaches top: pin and play entrance
+    const pinSt = ScrollTrigger.create({
+      trigger: wrapper,
+      start: "top top",
+      end: "+=1000",
+      pin: true,
+      pinSpacing: true,
+      onEnter: () => {
+        if (hasEnteredRef.current) return;
+        hasEnteredRef.current = true;
+        entranceTl.play();
+      },
+    });
 
     return () => {
-      tl.kill();
+      window.clearTimeout(inViewTimeout);
+      window.removeEventListener("hero:complete", scrollToLockSection);
+      heroSt?.kill();
+      lockSt.kill();
+      pinSt.kill();
+      entranceTl.kill();
+      entranceTlRef.current = null;
     };
-  }, [active]);
+  }, []);
 
   // ✅ animate progress ring on active change
   useEffect(() => {
@@ -234,36 +383,33 @@ export default function ServicesSection() {
     };
   }, [active, services.length]);
 
-  // ✅ autoplay the whole section
+  // Autoplay: when not paused, advance to next slide every AUTOPLAY_INTERVAL_MS
   useEffect(() => {
-    // clear existing
     if (autoplayRef.current) {
       window.clearInterval(autoplayRef.current);
       autoplayRef.current = null;
     }
-
-    if (paused) return;
-
-    autoplayRef.current = window.setInterval(() => {
-      setActive((v) => clampIndex(v + 1));
-    }, 4500);
-
+    if (!paused) {
+      autoplayRef.current = window.setInterval(() => {
+        setActive((v) => clampIndex(v + 1));
+      }, AUTOPLAY_INTERVAL_MS);
+    }
     return () => {
       if (autoplayRef.current) {
         window.clearInterval(autoplayRef.current);
         autoplayRef.current = null;
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paused]);
 
   const s = services[active];
 
   return (
-    <section
-      id="services"
-      className="relative min-h-[100vh] bg-[#101318] rounded-[28px] overflow-hidden border border-white/10"
-    >
+    <div ref={wrapperRef} className="relative z-30 h-screen w-screen box-border bg-[#101318] py-10 px-8">
+      <section
+        id="services"
+        className="relative h-full w-full bg-[#101318] rounded-[28px] overflow-hidden border border-white/10"
+      >
       {/* Background vibe */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-white/5" />
@@ -272,7 +418,7 @@ export default function ServicesSection() {
       </div>
 
       {/* Top-left progress ring */}
-      <div className="absolute left-14 top-14 z-20">
+      <div ref={progressWrapRef} className="absolute left-14 top-14 z-20">
         <ProgressRing
           value={active + 1}
           total={services.length}
@@ -289,7 +435,7 @@ export default function ServicesSection() {
       </div>
 
       {/* Center content */}
-      <div className="relative z-10 px-14 py-16 min-h-[100vh] flex items-center">
+      <div className="relative z-10 px-14 py-16 h-full min-h-0 flex items-center">
         <div className="w-full relative">
           {/* Left content */}
           <div ref={contentRef} className="max-w-[720px]">
@@ -301,43 +447,56 @@ export default function ServicesSection() {
 
             <a
               href={s.ctaHref}
-              className={`mt-10 inline-flex items-center gap-3 text-white/80 hover:text-white transition ${dmMono.className} tracking-widest text-xs`}
+              className={`group relative mt-10 inline-flex items-center justify-center gap-2 text-white/80 hover:text-white transition-colors duration-200 ${dmMono.className} tracking-widest text-xs`}
             >
-              <span className="inline-flex items-center justify-center h-9 px-5 rounded-full border border-white/15 bg-white/5 backdrop-blur">
-                {s.ctaLabel}
+              <span className="pointer-events-none absolute -left-4 top-1/2 -translate-y-1/2 opacity-0 -translate-x-1 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0">
+                <Image src="/icons/hero-bracket.svg" alt="" width={6} height={6} className="opacity-90" />
               </span>
-              <span className="text-white/60">↗</span>
+              <span>{s.ctaLabel}</span>
+              <span className="inline-block text-white/60 transition-transform duration-300 ease-out group-hover:rotate-[360deg] group-hover:scale-110">
+                ↗
+              </span>
+              <span className="pointer-events-none absolute -right-4 top-1/2 -translate-y-1/2 opacity-0 translate-x-1 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0">
+                <Image
+                  src="/icons/hero-bracket.svg"
+                  alt=""
+                  width={6}
+                  height={6}
+                  className="opacity-90 rotate-180"
+                />
+              </span>
             </a>
           </div>
 
-          {/* Bottom-right SINGLE card (no stack) */}
-          <div className="absolute right-14 bottom-20">
+          {/* Right: SERVICE block (timeline-style) — positioned below top-right line */}
+          <div className="absolute right-14 top-0">
             <div
               ref={cardRef}
-              className="relative w-[460px] h-[300px] rounded-[28px] border border-white/10 shadow-2xl overflow-hidden"
+              className="relative w-[420px] min-h-[280px] pl-8"
             >
-              <div className="absolute inset-0 bg-[#0B0E12]" />
-              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
+              {/* Vertical accent line */}
+              <div ref={serviceLineRef} className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-[#F4F1D8]/40 via-white/20 to-transparent origin-top" />
+              <div className={`text-[11px] tracking-[0.28em] text-white/50 ${dmMono.className}`}>SERVICE</div>
 
-              <div className="relative p-7 h-full flex flex-col">
-                <div className={`text-[11px] tracking-[0.28em] text-white/60 ${dmMono.className}`}>SERVICE</div>
-
-                <div className="mt-4 space-y-4">
-                  {s.cards.map((c) => (
-                    <div key={c.label} className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4">
-                      <div className="text-white/90 font-semibold text-lg">{c.label}</div>
-                      <div className="mt-1 text-white/55 text-sm">{c.meta}</div>
-                      <div className={`mt-2 text-white/60 text-[11px] tracking-widest ${dmMono.className}`}>
+              <div className="mt-5 space-y-0">
+                {s.cards.map((c) => (
+                  <div
+                    key={c.label}
+                    data-service-row
+                    className="relative flex gap-4 py-4 border-b border-white/[0.06] last:border-0 last:pb-0 first:pt-0"
+                  >
+                    <span className="absolute -left-8 top-1/2 -translate-y-1/2 w-0 flex justify-center" aria-hidden>
+                    <span className="absolute left-0 top-0 h-1.5 w-1.5 rounded-full bg-[#F4F1D8]/70 -translate-x-1/2" />
+                  </span>
+                    <div>
+                      <div className="text-white/90 font-semibold text-base tracking-tight">{c.label}</div>
+                      <div className="mt-0.5 text-white/50 text-sm">{c.meta}</div>
+                      <div className={`mt-1.5 text-white/45 text-[11px] tracking-widest ${dmMono.className}`}>
                         {c.stack}
                       </div>
                     </div>
-                  ))}
-                </div>
-
-                <div className="mt-auto pt-5 flex items-center justify-between">
-                  <div className={`text-[11px] tracking-[0.22em] text-white/55 ${dmMono.className}`}>NAV</div>
-                  <div className="text-white/40 text-sm">← prev / next →</div>
-                </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -345,10 +504,10 @@ export default function ServicesSection() {
       </div>
 
       {/* Bottom-left arrows (section anchored) */}
-      <div className="absolute left-14 bottom-14 z-20 flex items-center gap-3">
+      <div ref={arrowsRef} className="absolute left-14 bottom-14 z-20 flex items-center gap-3">
         <button
           onClick={goPrev}
-          className="h-10 w-10 rounded-full border border-white/10 bg-white/5 backdrop-blur text-white/70 hover:text-white transition"
+          className="h-10 w-10 rounded-full border border-white/10 bg-white/5 backdrop-blur text-white/70 hover:text-white transition flex items-center justify-center"
           aria-label="Previous"
         >
           ←
@@ -356,29 +515,32 @@ export default function ServicesSection() {
 
         <button
           onClick={goNext}
-          className="h-10 w-10 rounded-full border border-white/10 bg-white/5 backdrop-blur text-white/70 hover:text-white transition"
+          className="h-10 w-10 rounded-full border border-white/10 bg-white/5 backdrop-blur text-white/70 hover:text-white transition flex items-center justify-center"
           aria-label="Next"
         >
           →
         </button>
-
-        <div className={`ml-3 text-[10px] tracking-[0.28em] text-white/40 ${dmMono.className}`}>
-          {String(active + 1).padStart(2, "0")} / {String(services.length).padStart(2, "0")}
-        </div>
       </div>
 
-      {/* Bottom-right pause button (section anchored) */}
-      <div className="absolute right-14 bottom-14 z-20 flex items-center gap-3">
+      {/* Bottom-right pause/play button (section anchored) */}
+      <div ref={pauseRef} className="absolute right-14 bottom-14 z-20 flex items-center gap-3">
         <button
           onClick={() => setPaused((v) => !v)}
-          className="h-10 px-4 rounded-full border border-white/10 bg-white/5 backdrop-blur text-white/70 hover:text-white transition"
+          className="h-10 w-10 rounded-full border border-white/10 bg-white/5 backdrop-blur text-white/70 hover:text-white transition flex items-center justify-center"
           aria-label={paused ? "Play" : "Pause"}
         >
-          <span className={`${dmMono.className} text-[11px] tracking-[0.22em]`}>
-            {paused ? "PLAY" : "PAUSE"}
-          </span>
+          {paused ? (
+            <svg className="w-4 h-4 ml-0.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+              <path d="M8 5v14l11-7L8 5z" />
+            </svg>
+          ) : (
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+              <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+            </svg>
+          )}
         </button>
       </div>
     </section>
+    </div>
   );
 }
