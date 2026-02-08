@@ -76,8 +76,8 @@ export default function TextSection() {
       ref={sectionRef}
       className="relative z-20 min-h-screen w-full bg-[#101318] flex items-center justify-center py-24 px-8"
     >
-      <div className="max-w-4xl mx-auto text-left">
-        <p className={`text-[32px] text-white/70 leading-relaxed ${manrope.className}`}>
+      <div className="max-w-5xl mx-auto text-left">
+        <p className={`text-[32px] text-white leading-relaxed ${manrope.className}`}>
           <span ref={line1Ref} className="block">
             I blend design, product strategy, and engineering to build seamless digital experiences.
           </span>

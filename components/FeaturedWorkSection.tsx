@@ -6,9 +6,9 @@ import { dmMono } from "@/app/layout";
 
 const VIEWPORT_DELAY = 0.2;
 
-// Bigger cards: center ~320x400, side ~280x350, offset so arc is visible
-const CARD_OFFSET_X = 280;
-const CARD_ARC_Y = -48;
+// Bigger cards, spread much more along the arc
+const CARD_OFFSET_X = 420;
+const CARD_ARC_Y = -56;
 const LEFT_ROTATION = -14;
 const RIGHT_ROTATION = 14;
 
@@ -19,6 +19,7 @@ export default function FeaturedWorkSection() {
   const rightCardRef = useRef<HTMLDivElement | null>(null);
   const textWrapRef = useRef<HTMLDivElement | null>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
+  const hasPlayedRef = useRef(false);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -84,11 +85,15 @@ export default function FeaturedWorkSection() {
       (entries) => {
         const [entry] = entries;
         if (!entry || !tlRef.current) return;
-        const inView = entry.isIntersecting && entry.intersectionRatio >= 0.12;
+        // Only run once per page load; no exit/reset
+        if (hasPlayedRef.current) return;
+        const inView = entry.isIntersecting && entry.intersectionRatio >= 0.15;
 
         if (inView) {
           delayId = setTimeout(() => {
             delayId = null;
+            if (hasPlayedRef.current) return;
+            hasPlayedRef.current = true;
             tlRef.current?.play();
           }, VIEWPORT_DELAY * 1000);
         } else {
@@ -96,10 +101,9 @@ export default function FeaturedWorkSection() {
             clearTimeout(delayId);
             delayId = null;
           }
-          tlRef.current?.reverse();
         }
       },
-      { threshold: [0, 0.05, 0.12, 0.25, 0.5, 1], rootMargin: "0px" }
+      { threshold: 0.15, rootMargin: "0px" }
     );
 
     io.observe(section);
@@ -118,47 +122,37 @@ export default function FeaturedWorkSection() {
       ref={sectionRef}
       className="relative z-20 min-h-screen w-full bg-[#101318] flex flex-col items-center justify-center py-24 px-8 overflow-hidden"
     >
-      {/* Same bg as Services / Text sections */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-white/5" />
-        <div className="absolute -left-40 -top-40 h-[520px] w-[520px] rounded-full bg-white/10 blur-3xl" />
-        <div className="absolute -right-40 -bottom-40 h-[520px] w-[520px] rounded-full bg-white/10 blur-3xl" />
-      </div>
-
-      {/* Arc: curves from center card top to left/right card tops (drawn in final positions) */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      {/* Arc: full viewport width, left edge to right edge of screen */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-screen h-[320px] pointer-events-none flex items-center justify-center"
+        style={{ width: "100vw" }}
+        aria-hidden
+      >
         <svg
-          className="absolute w-[900px] h-[420px]"
-          viewBox="0 0 900 420"
+          className="w-full h-full"
+          viewBox="0 0 1200 320"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="none"
           aria-hidden
         >
-          {/* Left arc: center (450, 100) → curve up and left → left card (170, 100) */}
           <path
-            d="M 450 100 Q 280 20 170 100"
-            stroke="rgba(255,255,255,0.18)"
-            strokeWidth="1.5"
-            fill="none"
-          />
-          {/* Right arc: center (450, 100) → curve up and right → right card (730, 100) */}
-          <path
-            d="M 450 100 Q 620 20 730 100"
-            stroke="rgba(255,255,255,0.18)"
-            strokeWidth="1.5"
+            d="M 0 220 Q 600 40 1200 220"
+            stroke="rgba(255,255,255,0.16)"
+            strokeWidth="2"
             fill="none"
           />
         </svg>
       </div>
 
-      {/* Cards container - bigger */}
-      <div className="relative flex items-center justify-center w-full max-w-5xl h-[380px] md:h-[420px]">
+      {/* Cards container - bigger, spread more */}
+      <div className="relative flex items-center justify-center w-full max-w-6xl h-[420px] md:h-[480px]">
         <div
           ref={centerCardRef}
-          className="absolute z-10 w-[280px] h-[360px] md:w-[320px] md:h-[400px] rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-white/5"
+          className="absolute z-10 w-[320px] h-[400px] md:w-[360px] md:h-[440px] rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-white/5"
         >
           <img
-            src="https://images.unsplash.com/photo-1545127398-14699f92334b?w=640&q=80"
+            src="https://images.unsplash.com/photo-1545127398-14699f92334b?w=720&q=80"
             alt="Featured app"
             className="w-full h-full object-cover"
           />
@@ -166,11 +160,11 @@ export default function FeaturedWorkSection() {
 
         <div
           ref={leftCardRef}
-          className="absolute z-0 w-[240px] h-[320px] md:w-[280px] md:h-[350px] rounded-2xl overflow-hidden shadow-xl border border-white/10 bg-white/5"
+          className="absolute z-0 w-[280px] h-[360px] md:w-[320px] md:h-[400px] rounded-2xl overflow-hidden shadow-xl border border-white/10 bg-white/5"
           style={{ transformOrigin: "center center" }}
         >
           <img
-            src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=560&q=80"
+            src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=640&q=80"
             alt=""
             className="w-full h-full object-cover"
           />
@@ -178,11 +172,11 @@ export default function FeaturedWorkSection() {
 
         <div
           ref={rightCardRef}
-          className="absolute z-0 w-[240px] h-[320px] md:w-[280px] md:h-[350px] rounded-2xl overflow-hidden shadow-xl border border-white/10 bg-white/5"
+          className="absolute z-0 w-[280px] h-[360px] md:w-[320px] md:h-[400px] rounded-2xl overflow-hidden shadow-xl border border-white/10 bg-white/5"
           style={{ transformOrigin: "center center" }}
         >
           <img
-            src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=560&q=80"
+            src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=640&q=80"
             alt=""
             className="w-full h-full object-cover"
           />
