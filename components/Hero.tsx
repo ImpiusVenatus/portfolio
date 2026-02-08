@@ -25,6 +25,11 @@ export default function Hero() {
   // Right-side compare ref
   const compareWrapRef = useRef<HTMLDivElement | null>(null);
 
+  // Entry animation refs (Software, dev, center badge)
+  const softwareRef = useRef<HTMLHeadingElement | null>(null);
+  const devRef = useRef<HTMLHeadingElement | null>(null);
+  const centerBadgeRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
     if (
       !sectionRef.current ||
@@ -193,10 +198,6 @@ export default function Hero() {
         1.08
       );
 
-      // -------------------------
-      // ✅ EXIT PHASE (parallax: contents fade, image shrinks as next section comes up)
-      // -------------------------
-
       // Hide overlay text + compare (delayed so compare stays on screen longer)
       tl.to(
         [fromEl, toEl, prodEl, compareEl],
@@ -237,20 +238,46 @@ export default function Hero() {
     return () => ctx.revert();
   }, []);
 
+  // Entry animation: runs after preloader completes (or immediately if preloader already done, e.g. client nav)
+  useEffect(() => {
+    const software = softwareRef.current;
+    const dev = devRef.current;
+    const center = centerBadgeRef.current;
+    if (!software || !dev || !center) return;
+
+    gsap.set([software, dev, center], { autoAlpha: 0, filter: "blur(12px)" });
+
+    const runEntry = () => {
+      const tl = gsap.timeline();
+      tl.to(center, { autoAlpha: 1, filter: "blur(0px)", duration: 0.7, ease: "power2.out" }, 0.15);
+      tl.to(software, { autoAlpha: 1, filter: "blur(0px)", duration: 0.9, ease: "power2.out" }, 0.25);
+      tl.to(dev, { autoAlpha: 1, filter: "blur(0px)", duration: 0.9, ease: "power2.out" }, 0.4);
+    };
+
+    if (typeof window !== "undefined" && sessionStorage.getItem("preloaderDone")) {
+      runEntry();
+      return;
+    }
+
+    const handler = () => runEntry();
+    window.addEventListener("preloader:complete", handler);
+    return () => window.removeEventListener("preloader:complete", handler);
+  }, []);
+
   return (
     <section id="hero" ref={sectionRef} className="relative h-screen bg-[#101318]">
       <div className="relative h-screen overflow-hidden px-14 pt-10 pb-16">
         {/* UI LAYER */}
         <div ref={uiRef} className="relative h-full flex flex-col z-30">
           {/* Center badge */}
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div ref={centerBadgeRef} className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <div className="flex items-center gap-6 opacity-90">
               <Image
                 src="/icons/hero-bracket.svg"
                 alt=""
                 width={50}
                 height={80}
-                className="opacity-90"
+                className="opacity-90 hero-bracket-jiggle"
                 priority
               />
 
@@ -270,7 +297,7 @@ export default function Hero() {
                 alt=""
                 width={50}
                 height={80}
-                className="rotate-180 opacity-90"
+                className="opacity-90 hero-bracket-jiggle-right"
                 priority
               />
             </div>
@@ -280,11 +307,13 @@ export default function Hero() {
           <div className="mt-auto">
             <div className="flex items-end justify-between">
               <h1
+                ref={softwareRef}
                 className={`${spaceGrotesk.className} font-bold text-[200px] leading-[0.82] text-[#F4F1D8] drop-shadow-xl`}
               >
-                Creative
+                Software
               </h1>
               <h1
+                ref={devRef}
                 className={`${spaceGrotesk.className} font-bold text-[200px] leading-[0.82] text-[#F4F1D8] drop-shadow-xl`}
               >
                 dev
@@ -296,7 +325,7 @@ export default function Hero() {
         {/* IMAGE */}
         <div
           ref={cardRef}
-          className="absolute z-40 left-[60%] bottom-[50px] -translate-x-1/2 w-[320px] h-[220px]"
+          className="absolute z-40 left-[65%] bottom-[50px] -translate-x-1/2 w-[380px] h-[240px]"
         >
           <div
             ref={innerRef}
@@ -313,8 +342,8 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* LEFT TEXT + RIGHT COMPARE */}
-        <div ref={processTextRef} className="fixed inset-0 z-[200] pointer-events-none">
+        {/* LEFT TEXT + RIGHT COMPARE - hidden initially to prevent flash before GSAP */}
+        <div ref={processTextRef} className="fixed inset-0 z-[200] pointer-events-none opacity-0">
           <div className="absolute left-24 top-1/2 -translate-y-1/2">
             <div className={`${spaceGrotesk.className} text-[#F4F1D8] tracking-tight`}>
               <div ref={fromRef} className="text-[160px] leading-none font-bold">
