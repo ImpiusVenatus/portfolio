@@ -39,6 +39,7 @@ export default function Hero() {
     )
       return;
 
+    let heroCompleteFired = false;
     const ctx = gsap.context(() => {
       const sectionEl = sectionRef.current!;
       const uiEl = uiRef.current!;
@@ -76,13 +77,17 @@ export default function Hero() {
           pinSpacing: true,
           anticipatePin: 1,
 
-          // ✅ Broadcast Hero progress so Navbar can swap reliably
+          // ✅ Broadcast Hero progress so Navbar can swap reliably; fire hero:complete once when done so Services can auto-lock
           onUpdate: (self) => {
             window.dispatchEvent(
               new CustomEvent("hero:progress", {
                 detail: { progress: self.progress },
               })
             );
+            if (!heroCompleteFired && self.progress >= 0.98) {
+              heroCompleteFired = true;
+              window.dispatchEvent(new CustomEvent("hero:complete"));
+            }
           },
         },
       });
@@ -117,7 +122,7 @@ export default function Hero() {
           paddingBottom: 60,
           borderWidth: 0,
           boxShadow: "none",
-          overflow: "hidden", // ✅ avoids weird edges while it moves out later
+          overflow: "hidden",
           ease: "none",
         },
         0
@@ -189,11 +194,10 @@ export default function Hero() {
       );
 
       // -------------------------
-      // ✅ EXIT PHASE (extra scroll)
-      // Scroll more -> image moves up -> screen becomes blank
+      // ✅ EXIT PHASE (parallax: contents fade, image shrinks as next section comes up)
       // -------------------------
 
-      // Hide overlay text + compare
+      // Hide overlay text + compare (delayed so compare stays on screen longer)
       tl.to(
         [fromEl, toEl, prodEl, compareEl],
         {
@@ -202,7 +206,7 @@ export default function Hero() {
           ease: "none",
           duration: 0.25,
         },
-        1.22
+        1.72
       );
 
       // Ensure overlay container also goes away
@@ -213,27 +217,28 @@ export default function Hero() {
           ease: "none",
           duration: 0.15,
         },
-        1.26
+        1.76
       );
 
-      // Push the fullscreen card out of the viewport (up)
+      // Shrink the fullscreen card in place (parallax) as next section scrolls up — no move up
       tl.to(
         cardEl,
         {
-          y: "-80vh", // ✅ goes above viewport
-          autoAlpha: 0, // ✅ optional fade so it truly ends blank
+          scale: 0.88,
+          transformOrigin: "50% 50%",
           ease: "none",
           duration: 0.6,
         },
-        1.28
+        1.78
       );
+
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative h-screen bg-[#101318]">
+    <section id="hero" ref={sectionRef} className="relative h-screen bg-[#101318]">
       <div className="relative h-screen overflow-hidden px-14 pt-10 pb-16">
         {/* UI LAYER */}
         <div ref={uiRef} className="relative h-full flex flex-col z-30">
