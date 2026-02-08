@@ -1,4 +1,6 @@
+import CapabilitiesSection from "@/components/CapabilitiesSection";
 import FeaturedWorkSection from "@/components/FeaturedWorkSection";
+import FooterSection from "@/components/FooterSection";
 import Hero from "@/components/Hero";
 import Navbar from "@/components/Navbar";
 import ServicesSection from "@/components/ServicesSection";
@@ -12,6 +14,8 @@ export default function HomePage() {
       <ServicesSection />
       <TextSection />
       <FeaturedWorkSection />
+      <CapabilitiesSection />
+      <FooterSection />
     </main>
   );
 }
