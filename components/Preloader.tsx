@@ -81,7 +81,9 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
       PROGRESS_DUR + CIRCLE_APPEAR_DUR * 0.5
     );
 
-    return () => tl.kill();
+    return () => {
+      tl.kill();
+    };
   }, [onComplete]);
 
   return (
