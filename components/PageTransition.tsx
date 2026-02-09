@@ -62,7 +62,9 @@ export default function PageTransition({ onComplete }: { onComplete: () => void 
       WHITE_APPEAR_DUR + HERO_FOLLOW_DELAY
     );
 
-    return () => tl.kill();
+    return () => {
+      tl.kill();
+    };
   }, [onComplete]);
 
   return (

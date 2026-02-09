@@ -41,7 +41,9 @@ export default function ContactPageContent() {
       ENTRY_STAGGER
     );
 
-    return () => tl.kill();
+    return () => {
+      tl.kill();
+    };
   }, []);
 
   return (
