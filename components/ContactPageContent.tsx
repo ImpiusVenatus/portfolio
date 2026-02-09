@@ -47,7 +47,7 @@ export default function ContactPageContent() {
   }, []);
 
   return (
-    <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+    <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
       <div ref={leftRef} className="text-left order-2 lg:order-1">
         <div className={`text-[10px] tracking-[0.28em] text-white/45 ${dmMono.className}`}>
           CONTACT
@@ -98,7 +98,7 @@ export default function ContactPageContent() {
         </TransitionLink>
       </div>
 
-      <div ref={formWrapRef} className="order-1 lg:order-2">
+      <div ref={formWrapRef} className="order-1 lg:order-2 w-full max-w-lg mx-auto lg:mx-0">
         <ContactForm />
       </div>
     </div>
