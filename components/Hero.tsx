@@ -351,13 +351,13 @@ export default function Hero() {
         <div ref={processTextRef} className="fixed inset-0 z-[200] pointer-events-none opacity-0">
           <div className="absolute left-24 top-1/2 -translate-y-1/2">
             <div className={`${spaceGrotesk.className} text-[#F4F1D8] tracking-tight`}>
-              <div ref={fromRef} className="text-[160px] leading-none font-bold">
+              <div ref={fromRef} className="text-[160px] leading-none font-bold uppercase">
                 From Idea
               </div>
               <div ref={toRef} className="text-[64px] leading-none mt-4 text-white/70">
                 to
               </div>
-              <div ref={prodRef} className="text-[160px] leading-none font-bold mt-4">
+              <div ref={prodRef} className="text-[160px] leading-none font-bold mt-4 uppercase">
                 Production
               </div>
             </div>
