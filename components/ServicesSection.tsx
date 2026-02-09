@@ -186,6 +186,7 @@ export default function ServicesSection() {
   const autoplayRef = useRef<number | null>(null);
   const hasEnteredRef = useRef(false);
   const hasAutoLockedRef = useRef(false);
+  const carouselInViewRef = useRef(false); // only advance autoplay when section is in view
   const prevActiveRef = useRef<number | null>(null); // null = first mount, then 0..n-1
   const entranceTlRef = useRef<gsap.core.Timeline | null>(null);
   const carouselTlRef = useRef<gsap.core.Timeline | null>(null);
@@ -334,18 +335,30 @@ export default function ServicesSection() {
     // Trigger 3: when Hero timeline completes
     window.addEventListener("hero:complete", scrollToLockSection);
 
-    // When section reaches top: pin and play entrance
+    // When section reaches top: pin (brief, like Core capabilities) and play entrance; track in-view for autoplay
     const pinSt = ScrollTrigger.create({
       trigger: wrapper,
       start: "top top",
-      end: "+=1000",
+      end: "+=280",
       pin: true,
       pinSpacing: true,
       onEnter: () => {
+        carouselInViewRef.current = true;
         if (hasEnteredRef.current) return;
         hasEnteredRef.current = true;
         entranceTl.play();
       },
+      onLeaveBack: () => { carouselInViewRef.current = false; },
+      onLeave: () => { carouselInViewRef.current = false; },
+    });
+
+    const inViewSt = ScrollTrigger.create({
+      trigger: wrapper,
+      start: "top 90%",
+      end: "bottom 10%",
+      onEnter: () => { carouselInViewRef.current = true; },
+      onLeaveBack: () => { carouselInViewRef.current = false; },
+      onLeave: () => { carouselInViewRef.current = false; },
     });
 
     return () => {
@@ -354,6 +367,7 @@ export default function ServicesSection() {
       heroSt?.kill();
       lockSt.kill();
       pinSt.kill();
+      inViewSt.kill();
       entranceTl.kill();
       entranceTlRef.current = null;
     };
@@ -383,7 +397,7 @@ export default function ServicesSection() {
     };
   }, [active, services.length]);
 
-  // Autoplay: when not paused, advance to next slide every AUTOPLAY_INTERVAL_MS
+  // Autoplay: only run when section is in view and not paused; prevents carousel advancing before user reaches section
   useEffect(() => {
     if (autoplayRef.current) {
       window.clearInterval(autoplayRef.current);
@@ -391,7 +405,7 @@ export default function ServicesSection() {
     }
     if (!paused) {
       autoplayRef.current = window.setInterval(() => {
-        setActive((v) => clampIndex(v + 1));
+        if (carouselInViewRef.current) setActive((v) => clampIndex(v + 1));
       }, AUTOPLAY_INTERVAL_MS);
     }
     return () => {
