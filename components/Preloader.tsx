@@ -11,80 +11,95 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
   const progressTextRef = useRef<HTMLSpanElement | null>(null);
   const progressTrackRef = useRef<HTMLDivElement | null>(null);
   const circleRef = useRef<HTMLDivElement | null>(null);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      sessionStorage.removeItem("preloaderDone");
-    }
-    const progressFill = progressFillRef.current;
-    const progressText = progressTextRef.current;
-    const progressTrack = progressTrackRef.current;
-    const circle = circleRef.current;
-    if (!progressFill || !circle) return;
+    let cancelled = false;
+    let tl: gsap.core.Timeline | null = null;
+    const maxRetries = 10;
+    let retries = 0;
+    const run = () => {
+      const progressFill = progressFillRef.current;
+      const progressText = progressTextRef.current;
+      const progressTrack = progressTrackRef.current;
+      const circle = circleRef.current;
+      if (!progressFill || !circle) {
+        if (typeof window !== "undefined" && retries < maxRetries) {
+          retries += 1;
+          requestAnimationFrame(() => {
+            if (!cancelled) run();
+          });
+        }
+        return;
+      }
 
-    const PROGRESS_DUR = 1.8;
-    const CIRCLE_APPEAR_DUR = 0.3;
-    const CIRCLE_GROW_DUR = 1;
-    const circleStartScale = 0.01;
-    const circleEndScale = 3;
+      const PROGRESS_DUR = 1.8;
+      const CIRCLE_APPEAR_DUR = 0.3;
+      const CIRCLE_GROW_DUR = 1;
+      const circleStartScale = 0.01;
+      const circleEndScale = 3;
 
-    gsap.set(progressFill, { scaleX: 0, transformOrigin: "left center" });
-    gsap.set(circle, {
-      scale: circleStartScale,
-      opacity: 0,
-      transformOrigin: "50% 50%",
-    });
+      gsap.set(progressFill, { scaleX: 0, transformOrigin: "left center" });
+      gsap.set(circle, {
+        scale: circleStartScale,
+        opacity: 0,
+        transformOrigin: "50% 50%",
+      });
 
-    const tl = gsap.timeline({
-      onComplete: () => {
-        onComplete();
-      },
-    });
+      tl = gsap.timeline({
+        onComplete: () => {
+          onCompleteRef.current();
+        },
+      });
 
-    tl.to(progressFill, {
-      scaleX: 1,
-      duration: PROGRESS_DUR,
-      ease: "power2.inOut",
-      onUpdate: function () {
-        const p = Math.round((this.progress() ?? 0) * 100);
-        if (progressText) progressText.textContent = `${p}%`;
-      },
-    });
-
-    tl.to(
-      circle,
-      {
-        opacity: 1,
-        duration: CIRCLE_APPEAR_DUR,
-        ease: "power2.out",
-      },
-      PROGRESS_DUR
-    );
-
-    tl.to(
-      progressText,
-      { color: "#fff", duration: 0.2, ease: "power2.out" },
-      PROGRESS_DUR
-    );
-    tl.to(
-      [progressTrack, progressFill].filter(Boolean),
-      { backgroundColor: "#fff", duration: 0.2, ease: "power2.out" },
-      PROGRESS_DUR
-    );
-
-    tl.to(
-      circle,
-      {
-        scale: circleEndScale,
-        duration: CIRCLE_GROW_DUR,
+      tl.to(progressFill, {
+        scaleX: 1,
+        duration: PROGRESS_DUR,
         ease: "power2.inOut",
-      },
-      PROGRESS_DUR + CIRCLE_APPEAR_DUR * 0.5
-    );
+        onUpdate: function () {
+          const p = Math.round((this.progress() ?? 0) * 100);
+          if (progressText) progressText.textContent = `${p}%`;
+        },
+      });
 
-    return () => {
-      tl.kill();
+      tl.to(
+        circle,
+        {
+          opacity: 1,
+          duration: CIRCLE_APPEAR_DUR,
+          ease: "power2.out",
+        },
+        PROGRESS_DUR
+      );
+
+      tl.to(
+        progressText,
+        { color: "#fff", duration: 0.2, ease: "power2.out" },
+        PROGRESS_DUR
+      );
+      tl.to(
+        [progressTrack, progressFill].filter(Boolean),
+        { backgroundColor: "#fff", duration: 0.2, ease: "power2.out" },
+        PROGRESS_DUR
+      );
+
+      tl.to(
+        circle,
+        {
+          scale: circleEndScale,
+          duration: CIRCLE_GROW_DUR,
+          ease: "power2.inOut",
+        },
+        PROGRESS_DUR + CIRCLE_APPEAR_DUR * 0.5
+      );
     };
-  }, [onComplete]);
+    run();
+    return () => {
+      cancelled = true;
+      if (tl) tl.kill();
+    };
+  }, []);
 
   return (
     <div
