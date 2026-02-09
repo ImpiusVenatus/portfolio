@@ -3,13 +3,16 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { MapPin, Mail, Phone } from "lucide-react";
 import TransitionLink from "@/components/TransitionLink";
 import { dmMono } from "@/app/layout";
 
+gsap.registerPlugin(ScrollTrigger);
+
 const RESUME_URL = "/assets/Sadman's Resume.pdf";
-const ENTRY_DELAY_MS = 120;
-const ENTRY_DURATION = 0.5;
-const ENTRY_STAGGER = 0.08;
+const ENTRY_DURATION = 0.6;
+const EXIT_DURATION = 0.3;
 
 const TIMELINE_ITEMS: { side: "left" | "right"; label: string; content: React.ReactNode }[] = [
   {
@@ -34,7 +37,7 @@ const TIMELINE_ITEMS: { side: "left" | "right"; label: string; content: React.Re
   },
   {
     side: "right",
-    label: "VP Technology · Buckyy",
+    label: "VP of Technology · Buckyy",
     content: (
       <div className="text-sm">
         <div className="text-white/50 mb-2">Mar 2025 – Present</div>
@@ -105,40 +108,80 @@ const TIMELINE_ITEMS: { side: "left" | "right"; label: string; content: React.Re
 
 export default function AboutPageContent() {
   const headerRef = useRef<HTMLDivElement | null>(null);
-  const timelineRef = useRef<HTMLDivElement | null>(null);
-  const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const timelineSectionRef = useRef<HTMLDivElement | null>(null);
+  const lineRef = useRef<HTMLDivElement | null>(null);
+  const itemRowRefs = useRef<(HTMLLIElement | null)[]>([]);
+  const backLinkRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const headerEl = headerRef.current;
-    const timelineEl = timelineRef.current;
-    const items = itemsRef.current.filter(Boolean);
+    const sectionEl = timelineSectionRef.current;
+    const lineEl = lineRef.current;
+    const rows = itemRowRefs.current.filter(Boolean);
+    const backEl = backLinkRef.current;
     if (!headerEl) return;
 
-    gsap.set(headerEl, { autoAlpha: 0, y: 20 });
-    gsap.set(timelineEl, { autoAlpha: 0, y: 16 });
-    gsap.set(items, { autoAlpha: 0, y: 12 });
-
-    const tl = gsap.timeline({ delay: ENTRY_DELAY_MS / 1000 });
-    tl.to(headerEl, {
+    // Header: entry when in view, exit when scrolling back up
+    gsap.set(headerEl, { autoAlpha: 0, y: 24 });
+    const headerIn = gsap.to(headerEl, {
       autoAlpha: 1,
       y: 0,
       duration: ENTRY_DURATION,
       ease: "power2.out",
+      paused: true,
     });
-    if (timelineEl) {
-      tl.to(timelineEl, { autoAlpha: 1, y: 0, duration: ENTRY_DURATION, ease: "power2.out" }, ENTRY_STAGGER);
+    const stHeaderEnter = ScrollTrigger.create({
+      trigger: headerEl,
+      start: "top 82%",
+      onEnter: () => headerIn.play(),
+    });
+    const stHeaderExit = ScrollTrigger.create({
+      trigger: headerEl,
+      start: "top 85%",
+      onLeaveBack: () => gsap.to(headerEl, { autoAlpha: 0, y: -16, duration: EXIT_DURATION, ease: "power2.in" }),
+    });
+    // If header is already in view on load, play entry
+    requestAnimationFrame(() => {
+      if (headerEl.getBoundingClientRect().top < window.innerHeight * 0.85) headerIn.play();
+    });
+
+    if (!sectionEl || !lineEl) return;
+
+    // Timeline: line + dots + content reveal as user scrolls (scrub)
+    gsap.set(lineEl, { scaleY: 0, transformOrigin: "top" });
+    rows.forEach((el) => gsap.set(el, { autoAlpha: 0, y: 14 }));
+    if (backEl) gsap.set(backEl, { autoAlpha: 0, y: 10 });
+
+    const numItems = rows.length;
+    const lineProgress = 0.08;
+    const itemSpan = (1 - lineProgress - 0.08) / numItems; // leave 0.08 for back link
+    const scrubTl = gsap.timeline({ paused: true });
+    scrubTl.to(lineEl, { scaleY: 1, duration: 1, ease: "none" }, 0);
+    rows.forEach((el, i) => {
+      scrubTl.to(
+        el,
+        { autoAlpha: 1, y: 0, duration: 1, ease: "power2.out" },
+        lineProgress + i * itemSpan
+      );
+    });
+    if (backEl) {
+      scrubTl.to(backEl, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, 1 - 0.06);
     }
-    items.forEach((el, i) => {
-      tl.to(el, {
-        autoAlpha: 1,
-        y: 0,
-        duration: ENTRY_DURATION,
-        ease: "power2.out",
-      }, ENTRY_STAGGER * 2 + i * ENTRY_STAGGER);
+
+    const scrollTrigger = ScrollTrigger.create({
+      trigger: sectionEl,
+      start: "top 78%",
+      end: "bottom 22%",
+      scrub: true,
+      animation: scrubTl,
     });
 
     return () => {
-      tl.kill();
+      scrollTrigger.kill();
+      stHeaderEnter.kill();
+      stHeaderExit.kill();
+      headerIn.kill();
+      scrubTl.kill();
     };
   }, []);
 
@@ -151,9 +194,20 @@ export default function AboutPageContent() {
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#F4F1D8] tracking-tight">
           Md Sadman Hossain
         </h1>
-        <p className="text-white/60 text-sm md:text-base">
-          Dhaka, Bangladesh · josephitesadman56@gmail.com · +8801717158743
-        </p>
+        <div className="flex flex-col gap-2 text-white/60 text-sm md:text-base">
+          <span className="flex items-center gap-2">
+            <MapPin className="shrink-0 w-4 h-4 text-white/50" aria-hidden />
+            Dhaka, Bangladesh
+          </span>
+          <span className="flex items-center gap-2">
+            <Mail className="shrink-0 w-4 h-4 text-white/50" aria-hidden />
+            josephitesadman56@gmail.com
+          </span>
+          <span className="flex items-center gap-2">
+            <Phone className="shrink-0 w-4 h-4 text-white/50" aria-hidden />
+            +8801717158743
+          </span>
+        </div>
         <p className="text-white/70 text-lg leading-relaxed max-w-2xl">
           Software Engineer specializing in fintech and applied AI, building real-world products across digital credit, remittance and diaspora services. I design and ship production systems end-to-end—from backend architectures and frontend designs to mobile apps deployed to the Play Store and App Store.
         </p>
@@ -181,19 +235,24 @@ export default function AboutPageContent() {
         </a>
       </div>
 
-      <div ref={timelineRef} className="relative">
-        {/* Vertical line */}
+      <div ref={timelineSectionRef} className="relative">
+        {/* Vertical line — draws as user scrolls */}
         <div
+          ref={lineRef}
           className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 bg-gradient-to-b from-white/20 via-white/30 to-white/20"
           aria-hidden
         />
-        {/* Timeline items: content alternates left / right of the line */}
+        {/* Timeline items: line, dot and text reveal on scroll */}
         <ul className="space-y-0">
           {TIMELINE_ITEMS.map((item, i) => (
-            <li key={i} className="relative flex items-start py-8 min-h-[5rem]">
+            <li
+              key={i}
+              ref={(el) => { itemRowRefs.current[i] = el; }}
+              className="relative flex items-start py-8 min-h-[5rem]"
+            >
               <div className={`flex-1 pr-6 ${item.side === "left" ? "text-right" : ""}`}>
                 {item.side === "left" && (
-                  <div ref={(el) => { itemsRef.current[i] = el; }}>
+                  <div>
                     <div className={`text-[10px] tracking-[0.28em] text-white/45 mb-2 ${dmMono.className}`}>
                       {item.label}
                     </div>
@@ -207,7 +266,7 @@ export default function AboutPageContent() {
               />
               <div className={`flex-1 pl-6 ${item.side === "right" ? "text-left" : ""}`}>
                 {item.side === "right" && (
-                  <div ref={(el) => { itemsRef.current[i] = el; }}>
+                  <div>
                     <div className={`text-[10px] tracking-[0.28em] text-white/45 mb-2 ${dmMono.className}`}>
                       {item.label}
                     </div>
@@ -220,7 +279,7 @@ export default function AboutPageContent() {
         </ul>
       </div>
 
-      <div className="pt-12">
+      <div ref={backLinkRef} className="pt-12">
         <TransitionLink
           href="/"
           className={`inline-flex items-center gap-2 text-white/50 hover:text-white/80 transition-colors ${dmMono.className} text-xs tracking-widest`}
