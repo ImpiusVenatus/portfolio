@@ -1,5 +1,6 @@
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import PreloaderGate from "@/components/PreloaderGate";
+import PageTransitionProvider from "@/components/PageTransitionProvider";
 import "./globals.css";
 import { DM_Mono, Manrope, Space_Grotesk } from "next/font/google";
 import localFont from "next/font/local";
@@ -35,12 +36,22 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <title>Sadman Hossain</title>
+      </head>
       <body
         className={`bg-[#070C10] text-white overflow-x-hidden ${manrope.className}`}
       >
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{if(sessionStorage.getItem('preloaderDone'))window.__PRELOADER_SKIP__=1;}catch(e){}})();`,
+          }}
+        />
         <PreloaderGate>
           <SmoothScrollProvider>
-            {children}
+            <PageTransitionProvider>
+              {children}
+            </PageTransitionProvider>
           </SmoothScrollProvider>
         </PreloaderGate>
       </body>

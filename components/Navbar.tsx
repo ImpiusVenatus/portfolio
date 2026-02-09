@@ -4,19 +4,28 @@ import Image from "next/image";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import { dmMono } from "@/app/layout";
+import { usePageTransition } from "./PageTransitionProvider";
+import TransitionLink from "./TransitionLink";
 
 type NavItem = { label: string; href: string };
 
 const NAV_ITEMS: NavItem[] = [
   { label: "PROJECTS", href: "#projects" },
-  { label: "ABOUT ME", href: "#about" },
+  { label: "ABOUT ME", href: "/about" },
   { label: "SERVICES", href: "#services" },
-  { label: "CONTACT", href: "#contact" },
+  { label: "CONTACT", href: "/contact" },
 ];
 
-function NavLink({ label, href }: NavItem) {
+function NavLink({ label, href, onInternalNavigate }: NavItem & { onInternalNavigate?: () => void }) {
+  const isInternal = href.startsWith("/") && !href.startsWith("//");
+  const handleClick = (e: React.MouseEvent) => {
+    if (isInternal && onInternalNavigate) {
+      e.preventDefault();
+      onInternalNavigate();
+    }
+  };
   return (
-    <a href={href} className="group relative inline-flex items-center justify-center">
+    <a href={href} onClick={handleClick} className="group relative inline-flex items-center justify-center">
       <span className="pointer-events-none absolute -left-4 top-1/2 -translate-y-1/2 opacity-0 -translate-x-1 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0">
         <Image src="/icons/hero-bracket.svg" alt="" width={6} height={6} className="opacity-90" />
       </span>
@@ -94,6 +103,7 @@ function MenuIconButton({
 }
 
 export default function Navbar() {
+  const pageTransition = usePageTransition();
   const headerWrapRef = useRef<HTMLDivElement | null>(null);
   const menuBtnRef = useRef<HTMLButtonElement | null>(null);
 
@@ -313,15 +323,22 @@ export default function Navbar() {
         ref={headerWrapRef}
         className="fixed top-10 left-14 right-14 z-[9998] flex items-center justify-between"
       >
-        <div className={`flex items-center gap-2 tracking-widest text-sm opacity-90 ${dmMono.className}`}>
+        <TransitionLink
+          href="/"
+          className={`flex items-center gap-2 tracking-widest text-sm opacity-90 ${dmMono.className} text-white/90 hover:text-white transition-colors`}
+        >
           <span>||</span>
           <span className="text-lg">Md Sadman Hossain</span>
           <span>||</span>
-        </div>
+        </TransitionLink>
 
         <nav className={`hidden md:flex gap-10 text-xs tracking-widest opacity-90 ${dmMono.className}`}>
           {menuItems.map((item) => (
-            <NavLink key={item.href} {...item} />
+            <NavLink
+              key={item.href}
+              {...item}
+              onInternalNavigate={item.href.startsWith("/") ? () => pageTransition?.navigateWithTransition(item.href) : undefined}
+            />
           ))}
         </nav>
       </div>
@@ -366,7 +383,15 @@ export default function Navbar() {
               ref={(el) => {
                 itemRefs.current[idx] = el;
               }}
-              onClick={() => setOpen(false)}
+              onClick={(e) => {
+                if (item.href.startsWith("/") && pageTransition) {
+                  e.preventDefault();
+                  setOpen(false);
+                  pageTransition.navigateWithTransition(item.href);
+                } else {
+                  setOpen(false);
+                }
+              }}
               className={`
                 px-3 py-3 rounded-2xl
                 text-white/90 hover:text-white
