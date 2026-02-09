@@ -2,7 +2,10 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { dmMono } from "@/app/layout";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const VIEWPORT_DELAY = 0.2;
 
@@ -20,6 +23,39 @@ export default function FeaturedWorkSection() {
   const textWrapRef = useRef<HTMLDivElement | null>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
   const hasPlayedRef = useRef(false);
+  const hasLockedRef = useRef(false);
+
+  // Viewport locking: same as Core capabilities — align when section enters, then pin briefly
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const scrollToAlign = () => {
+      if (hasLockedRef.current) return;
+      hasLockedRef.current = true;
+      const top = section.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top, behavior: "smooth" });
+    };
+
+    const alignSt = ScrollTrigger.create({
+      trigger: section,
+      start: "top 88%",
+      onEnter: scrollToAlign,
+    });
+
+    const pinSt = ScrollTrigger.create({
+      trigger: section,
+      start: "top top",
+      end: "+=280",
+      pin: true,
+      pinSpacing: true,
+    });
+
+    return () => {
+      alignSt.kill();
+      pinSt.kill();
+    };
+  }, []);
 
   useEffect(() => {
     const section = sectionRef.current;
