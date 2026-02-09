@@ -10,9 +10,9 @@ import TransitionLink from "./TransitionLink";
 type NavItem = { label: string; href: string };
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "PROJECTS", href: "#projects" },
+  { label: "PROJECTS", href: "/projects" },
   { label: "ABOUT ME", href: "/about" },
-  { label: "SERVICES", href: "#services" },
+  { label: "SERVICES", href: "/services" },
   { label: "CONTACT", href: "/contact" },
 ];
 
