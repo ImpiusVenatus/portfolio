@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { dmMono } from "@/app/layout";
 import { usePageTransition } from "./PageTransitionProvider";
 import TransitionLink from "./TransitionLink";
+import { HamburgerMenuOverlay, type MenuItem } from "./lightswind/hamburger-menu-overlay";
 
 type NavItem = { label: string; href: string };
 
@@ -47,30 +48,6 @@ function NavLink({ label, href, onInternalNavigate }: NavItem & { onInternalNavi
   );
 }
 
-/** Random chars -> settles to final text */
-function scrambleTo(el: HTMLElement, finalText: string, duration = 0.55) {
-  const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@$#%&*+-";
-  const obj = { t: 0 };
-  const len = finalText.length;
-
-  return gsap.to(obj, {
-    t: 1,
-    duration,
-    ease: "power2.out",
-    onUpdate: () => {
-      const reveal = Math.floor(obj.t * len);
-      let out = "";
-      for (let i = 0; i < len; i++) {
-        out += i < reveal ? finalText[i] : charset[Math.floor(Math.random() * charset.length)];
-      }
-      el.textContent = out;
-    },
-    onComplete: () => {
-      el.textContent = finalText;
-    },
-  });
-}
-
 function MenuIconButton({
   btnRef,
   onClick,
@@ -107,13 +84,23 @@ export default function Navbar() {
   const headerWrapRef = useRef<HTMLDivElement | null>(null);
   const menuBtnRef = useRef<HTMLButtonElement | null>(null);
 
-  const panelRef = useRef<HTMLDivElement | null>(null);
-  const backdropRef = useRef<HTMLDivElement | null>(null);
-
-  const itemRefs = useRef<Array<HTMLAnchorElement | null>>([]);
-  itemRefs.current = [];
-
   const [open, setOpen] = useState(false);
+
+  const overlayMenuItems: MenuItem[] = useMemo(
+    () =>
+      NAV_ITEMS.map((item) => ({
+        label: item.label,
+        href: item.href,
+        onClick:
+          item.href.startsWith("/") && pageTransition
+            ? () => {
+                setOpen(false);
+                pageTransition.navigateWithTransition(item.href);
+              }
+            : () => setOpen(false),
+      })),
+    [pageTransition]
+  );
 
   // Swap config
   const THRESHOLD = 0.5;
@@ -204,110 +191,40 @@ export default function Navbar() {
     };
   }, []);
 
-  // ✅ DRAWER ANIMATION (POP + SCRAMBLE ONLY)
+  // Hamburger button <-> X animation when mobile menu open/close
   useEffect(() => {
-    if (!menuBtnRef.current || !panelRef.current || !backdropRef.current) return;
+    if (!menuBtnRef.current) return;
 
     const menuBtnEl = menuBtnRef.current;
-    const panelEl = panelRef.current;
-    const backdropEl = backdropRef.current;
-
     const topLine = menuBtnEl.querySelector<HTMLElement>(".menu-line-top");
     const midLine = menuBtnEl.querySelector<HTMLElement>(".menu-line-mid");
     const botLine = menuBtnEl.querySelector<HTMLElement>(".menu-line-bot");
     if (!topLine || !midLine || !botLine) return;
 
-    // base drawer states
-    gsap.set(backdropEl, { autoAlpha: 0 });
-    gsap.set(panelEl, {
-      autoAlpha: 0,
-      scale: 0.6,
-      transformOrigin: "top right",
-    });
-
-    // items hidden (no slide)
-    const items = itemRefs.current.filter(Boolean) as HTMLElement[];
-    gsap.set(items, { autoAlpha: 0 });
-
     const killDrawer = () => {
       drawerTlRef.current?.kill();
       drawerTlRef.current = null;
-      gsap.killTweensOf([topLine, midLine, botLine, panelEl, backdropEl, ...items]);
+      gsap.killTweensOf([topLine, midLine, botLine]);
     };
 
-    const openDrawer = () => {
+    if (open) {
       killDrawer();
-
       const tl = gsap.timeline();
       drawerTlRef.current = tl;
-
-      // hamburger -> X
       tl.to(midLine, { autoAlpha: 0, scaleX: 0, duration: 0.12, ease: "power2.out" }, 0);
       tl.to(topLine, { y: 7, rotate: 45, duration: 0.22, ease: "power2.out" }, 0);
       tl.to(botLine, { y: -7, rotate: -45, duration: 0.22, ease: "power2.out" }, 0);
-
-      // backdrop
-      tl.to(backdropEl, { autoAlpha: 1, duration: 0.16, ease: "power2.out" }, 0.05);
-
-      tl.to(
-        panelEl,
-        {
-          autoAlpha: 1,
-          scale: 1,
-          duration: 0.28,
-          ease: "back.out(1.7)",
-        },
-        0.06
-      );
-
-      const FIRST_ITEM_DELAY = 0.35;
-      const ITEM_STAGGER = 0.18;
-      const SCRAMBLE_TIME = 0.75;
-
-      items.forEach((el, idx) => {
-        const label = el.getAttribute("data-label") ?? "";
-
-        const t = FIRST_ITEM_DELAY + idx * ITEM_STAGGER;
-
-        // show item (instant)
-        tl.set(el, { autoAlpha: 1 }, t);
-
-        // scramble into final text
-        tl.add(scrambleTo(el, label, SCRAMBLE_TIME), t);
-      });
-    };
-
-    const closeDrawer = () => {
+    } else {
       killDrawer();
-
       const tl = gsap.timeline();
       drawerTlRef.current = tl;
-
-      // hide items fast
-      tl.to(items, { autoAlpha: 0, duration: 0.08, ease: "power2.out", stagger: 0.02 }, 0);
-
-      // pop out panel
-      tl.to(
-        panelEl,
-        { autoAlpha: 0, scale: 0.75, duration: 0.16, ease: "power2.out" },
-        0.02
-      );
-
-      tl.to(backdropEl, { autoAlpha: 0, duration: 0.14, ease: "power2.out" }, 0.02);
-
-      // X -> hamburger
-      tl.to([topLine, botLine], { rotate: 0, duration: 0.18, ease: "power2.out" }, 0.06);
-      tl.to(topLine, { y: 0, duration: 0.18, ease: "power2.out" }, 0.06);
-      tl.to(botLine, { y: 0, duration: 0.18, ease: "power2.out" }, 0.06);
+      tl.to([topLine, botLine], { rotate: 0, duration: 0.18, ease: "power2.out" }, 0);
+      tl.to(topLine, { y: 0, duration: 0.18, ease: "power2.out" }, 0);
+      tl.to(botLine, { y: 0, duration: 0.18, ease: "power2.out" }, 0);
       tl.to(midLine, { autoAlpha: 1, scaleX: 1, duration: 0.14, ease: "power2.out" }, 0.14);
-    };
+    }
 
-    if (open) openDrawer();
-    else closeDrawer();
-
-    return () => {
-      killDrawer();
-    };
+    return () => killDrawer();
   }, [open]);
 
   const onMenuClick = () => {
@@ -346,66 +263,31 @@ export default function Navbar() {
       {/* Menu icon */}
       <MenuIconButton btnRef={menuBtnRef} onClick={onMenuClick} />
 
-      {/* Backdrop */}
+      {/* Mobile menu overlay (lightswind hamburger UI) */}
       <div
-        ref={backdropRef}
-        onClick={() => setOpen(false)}
-        className="fixed inset-0 z-[9990] bg-black/40 backdrop-blur-[2px]"
+        className="fixed inset-0 z-[9990]"
         style={{ pointerEvents: open ? "auto" : "none" }}
-      />
-
-      {/* Glass pop panel */}
-      <div
-        ref={panelRef}
-        className="
-          fixed top-24 right-14 z-[9991]
-          w-[280px] md:w-[320px]
-          rounded-3xl
-          border border-white/10
-          bg-white/10 backdrop-blur-xl
-          shadow-2xl
-          p-4
-        "
-        style={{ pointerEvents: open ? "auto" : "none" }}
+        aria-hidden={!open}
       >
-        <div className="px-2 py-2">
-          <div className={`text-[11px] tracking-[0.28em] text-white/70 ${dmMono.className}`}>
-            NAVIGATION
-          </div>
-        </div>
-
-        <div className="mt-2 flex flex-col">
-          {menuItems.map((item, idx) => (
-            <a
-              key={item.href}
-              href={item.href}
-              data-label={item.label}
-              ref={(el) => {
-                itemRefs.current[idx] = el;
-              }}
-              onClick={(e) => {
-                if (item.href.startsWith("/") && pageTransition) {
-                  e.preventDefault();
-                  setOpen(false);
-                  pageTransition.navigateWithTransition(item.href);
-                } else {
-                  setOpen(false);
-                }
-              }}
-              className={`
-                px-3 py-3 rounded-2xl
-                text-white/90 hover:text-white
-                hover:bg-white/10
-                transition
-                ${dmMono.className}
-                text-sm tracking-widest
-              `}
-            >
-              {/* text will be scrambled in */}
-              {item.label}
-            </a>
-          ))}
-        </div>
+        <HamburgerMenuOverlay
+          open={open}
+          onOpenChange={setOpen}
+          hideTrigger
+          items={overlayMenuItems}
+          buttonLeft="calc(100vw - 5rem)"
+          buttonTop="2.5rem"
+          overlayBackground="#101318"
+          textColor="#F4F1D8"
+          fontSize="lg"
+          fontFamily={dmMono.style?.fontFamily ?? '"DM Mono", monospace'}
+          fontWeight="normal"
+          animationDuration={0.8}
+          staggerDelay={0.08}
+          menuAlignment="left"
+          zIndex={9990}
+          keepOpenOnItemClick={false}
+          ariaLabel="Open navigation menu"
+        />
       </div>
     </>
   );
