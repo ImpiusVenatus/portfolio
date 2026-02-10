@@ -313,13 +313,13 @@ export default function Hero() {
             <div className="flex items-end justify-between">
               <h1
                 ref={softwareRef}
-                className={`${spaceGrotesk.className} font-bold text-[200px] leading-[0.82] text-heading drop-shadow-xl`}
+                className={`${spaceGrotesk.className} font-bold text-[112px] sm:text-[160px] lg:text-[200px] leading-[0.82] text-heading drop-shadow-xl`}
               >
                 Software
               </h1>
               <h1
                 ref={devRef}
-                className={`${spaceGrotesk.className} font-bold text-[200px] leading-[0.82] text-heading drop-shadow-xl`}
+                className={`${spaceGrotesk.className} font-bold text-[112px] sm:text-[160px] lg:text-[200px] leading-[0.82] text-heading drop-shadow-xl`}
               >
                 dev
               </h1>
