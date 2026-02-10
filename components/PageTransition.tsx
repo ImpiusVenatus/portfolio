@@ -18,9 +18,18 @@ export default function PageTransition({ onComplete }: { onComplete: () => void 
     const heroEl = heroRef.current;
     if (!whiteEl || !heroEl) return;
 
-    const WHITE_APPEAR_DUR = 0.25;
-    const WHITE_GROW_DUR = 1.25;
-    const HERO_FOLLOW_DELAY = 0.08;
+    const isDark = document.documentElement.classList.contains("dark");
+    // Dark: first white, then hero. Light: first hero, then white.
+    const firstEl = isDark ? whiteEl : heroEl;
+    const secondEl = isDark ? heroEl : whiteEl;
+
+    // Second rectangle must be on top so it's visible when it expands
+    firstEl.style.zIndex = "10";
+    secondEl.style.zIndex = "20";
+
+    const APPEAR_DUR = 0.25;
+    const GROW_DUR = 1.25;
+    const FOLLOW_DELAY = 0.08;
 
     gsap.set(whiteEl, { width: 0, height: 0, opacity: 0 });
     gsap.set(heroEl, { width: 0, height: 0, opacity: 0 });
@@ -31,36 +40,36 @@ export default function PageTransition({ onComplete }: { onComplete: () => void 
       },
     });
 
-    tl.to(whiteEl, {
+    tl.to(firstEl, {
       opacity: 1,
-      duration: WHITE_APPEAR_DUR,
+      duration: APPEAR_DUR,
       ease: "power2.out",
     });
     tl.to(
-      whiteEl,
+      firstEl,
       {
         width: COVER_SIZE,
         height: COVER_SIZE,
-        duration: WHITE_GROW_DUR,
+        duration: GROW_DUR,
         ease: "power2.inOut",
       },
-      WHITE_APPEAR_DUR * 0.4
+      APPEAR_DUR * 0.4
     );
 
     tl.to(
-      heroEl,
+      secondEl,
       { opacity: 1, duration: 0.1, ease: "power2.out" },
-      WHITE_APPEAR_DUR + HERO_FOLLOW_DELAY
+      APPEAR_DUR + FOLLOW_DELAY
     );
     tl.to(
-      heroEl,
+      secondEl,
       {
         width: COVER_SIZE,
         height: COVER_SIZE,
-        duration: WHITE_GROW_DUR,
+        duration: GROW_DUR,
         ease: "power2.inOut",
       },
-      WHITE_APPEAR_DUR + HERO_FOLLOW_DELAY
+      APPEAR_DUR + FOLLOW_DELAY
     );
 
     return () => {
@@ -76,11 +85,12 @@ export default function PageTransition({ onComplete }: { onComplete: () => void 
     >
       <div
         ref={whiteRef}
-        className="absolute right-0 bottom-0 bg-white opacity-0"
+        className="absolute right-0 bottom-0 opacity-0"
         style={{
           width: 0,
           height: 0,
           borderRadius: BORDER_RADIUS,
+          backgroundColor: "#ffffff",
         }}
       />
       <div

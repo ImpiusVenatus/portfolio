@@ -46,23 +46,23 @@ function ProgressRing({
   return (
     <div className="relative" style={{ width: size, height: size }} aria-label={`Service ${value} of ${total}`}>
       <svg width={size} height={size} className="block">
-        {/* track */}
+        {/* track: theme-aware (dark in light mode, light in dark mode) */}
         <circle
           cx={size / 2}
           cy={size / 2}
           r={r}
           fill="transparent"
-          stroke="rgba(255,255,255,0.12)"
+          stroke="var(--progress-track)"
           strokeWidth={stroke}
         />
-        {/* progress (animated) */}
+        {/* progress arc: theme-aware */}
         <circle
           ref={progressCircleRef}
           cx={size / 2}
           cy={size / 2}
           r={r}
           fill="transparent"
-          stroke="rgba(244,241,216,0.92)"
+          stroke="var(--progress-arc)"
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={c}
@@ -72,9 +72,9 @@ function ProgressRing({
       </svg>
 
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className={`text-[10px] tracking-[0.28em] text-white/45 ${dmMono.className}`}>SERVICES</div>
-        <div className={`mt-1 text-white/80 ${dmMono.className} tracking-widest`}>
-          {String(value).padStart(2, "0")} <span className="text-white/30">|</span> {String(total).padStart(2, "0")}
+        <div className={`text-[10px] tracking-[0.28em] text-text-muted-2 ${dmMono.className}`}>SERVICES</div>
+        <div className={`mt-1 text-text-muted ${dmMono.className} tracking-widest`}>
+          {String(value).padStart(2, "0")} <span className="text-text-muted-2">|</span> {String(total).padStart(2, "0")}
         </div>
       </div>
     </div>
@@ -419,16 +419,16 @@ export default function ServicesSection() {
   const s = services[active];
 
   return (
-    <div ref={wrapperRef} className="relative z-30 h-screen w-screen box-border bg-[#101318] py-10 px-8">
+    <div ref={wrapperRef} className="relative z-30 h-screen w-screen box-border bg-section-bg py-10 px-8">
       <section
         id="services"
-        className="relative h-full w-full bg-[#101318] rounded-[28px] overflow-hidden border border-white/10"
+        className="relative h-full w-full bg-section-bg rounded-[28px] overflow-hidden border border-border-subtle"
       >
       {/* Background vibe */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-white/5" />
-        <div className="absolute -left-40 -top-40 h-[520px] w-[520px] rounded-full bg-white/10 blur-3xl" />
-        <div className="absolute -right-40 -bottom-40 h-[520px] w-[520px] rounded-full bg-white/10 blur-3xl" />
+        <div className="absolute inset-0 bg-foreground/5" />
+        <div className="absolute -left-40 -top-40 h-[520px] w-[520px] rounded-full bg-foreground/10 blur-3xl" />
+        <div className="absolute -right-40 -bottom-40 h-[520px] w-[520px] rounded-full bg-foreground/10 blur-3xl" />
       </div>
 
       {/* Top-left progress ring */}
@@ -442,10 +442,10 @@ export default function ServicesSection() {
 
       {/* Top-right labels (more space from top) */}
       <div ref={pillRef} className="absolute right-14 top-24 z-20 text-right">
-        <div className={`text-[11px] tracking-[0.28em] text-white/70 ${dmMono.className}`}>{s.pillTop}</div>
-        <div className={`mt-3 text-[11px] tracking-[0.22em] text-white/80 ${dmMono.className}`}>{s.pillMid}</div>
-        <div className={`mt-2 text-[11px] tracking-[0.22em] text-white/80 ${dmMono.className}`}>{s.pillBot}</div>
-        <div className="mt-6 h-px w-[520px] bg-white/10" />
+        <div className={`text-[11px] tracking-[0.28em] text-text-muted ${dmMono.className}`}>{s.pillTop}</div>
+        <div className={`mt-3 text-[11px] tracking-[0.22em] text-text-muted ${dmMono.className}`}>{s.pillMid}</div>
+        <div className={`mt-2 text-[11px] tracking-[0.22em] text-text-muted ${dmMono.className}`}>{s.pillBot}</div>
+        <div className="mt-6 h-px w-[520px] bg-foreground/10" />
       </div>
 
       {/* Center content */}
@@ -453,21 +453,27 @@ export default function ServicesSection() {
         <div className="w-full relative">
           {/* Left content */}
           <div ref={contentRef} className="max-w-[720px]">
-            <h2 className={`${spaceGrotesk.className} text-[#F4F1D8] font-bold text-[96px] leading-[0.95]`}>
+            <h2 className={`${spaceGrotesk.className} text-heading font-bold text-[96px] leading-[0.95]`}>
               {s.title}
             </h2>
 
-            <p className="mt-8 max-w-[560px] text-white/60 leading-relaxed">{s.short}</p>
+            <p className="mt-8 max-w-[560px] text-text-muted-2 leading-relaxed">{s.short}</p>
 
             <a
               href={s.ctaHref}
-              className={`group relative mt-10 inline-flex items-center justify-center gap-2 text-white/80 hover:text-white transition-colors duration-200 ${dmMono.className} tracking-widest text-xs`}
+              className={`group relative mt-10 inline-flex items-center justify-center gap-2 text-text-muted hover:text-foreground transition-colors duration-200 ${dmMono.className} tracking-widest text-xs`}
             >
               <span className="pointer-events-none absolute -left-4 top-1/2 -translate-y-1/2 opacity-0 -translate-x-1 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0">
-                <Image src="/icons/hero-bracket.svg" alt="" width={6} height={6} className="opacity-90" />
+                <Image
+                  src="/icons/hero-bracket.svg"
+                  alt=""
+                  width={6}
+                  height={6}
+                  className="opacity-90 invert dark:invert-0"
+                />
               </span>
               <span>{s.ctaLabel}</span>
-              <span className="inline-block text-white/60 transition-transform duration-300 ease-out group-hover:rotate-[360deg] group-hover:scale-110">
+              <span className="inline-block text-text-muted-2 transition-transform duration-300 ease-out group-hover:rotate-[360deg] group-hover:scale-110">
                 ↗
               </span>
               <span className="pointer-events-none absolute -right-4 top-1/2 -translate-y-1/2 opacity-0 translate-x-1 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0">
@@ -476,7 +482,7 @@ export default function ServicesSection() {
                   alt=""
                   width={6}
                   height={6}
-                  className="opacity-90 rotate-180"
+                  className="opacity-90 rotate-180 invert dark:invert-0"
                 />
               </span>
             </a>
@@ -489,23 +495,23 @@ export default function ServicesSection() {
               className="relative w-[420px] min-h-[280px] pl-8"
             >
               {/* Vertical accent line */}
-              <div ref={serviceLineRef} className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-[#F4F1D8]/40 via-white/20 to-transparent origin-top" />
-              <div className={`text-[11px] tracking-[0.28em] text-white/50 ${dmMono.className}`}>SERVICE</div>
+              <div ref={serviceLineRef} className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-heading/40 via-foreground/20 to-transparent origin-top" />
+              <div className={`text-[11px] tracking-[0.28em] text-text-muted-2 ${dmMono.className}`}>SERVICE</div>
 
               <div className="mt-5 space-y-0">
                 {s.cards.map((c) => (
                   <div
                     key={c.label}
                     data-service-row
-                    className="relative flex gap-4 py-4 border-b border-white/[0.06] last:border-0 last:pb-0 first:pt-0"
+                    className="relative flex gap-4 py-4 border-b border-border-subtle last:border-0 last:pb-0 first:pt-0"
                   >
                     <span className="absolute -left-8 top-1/2 -translate-y-1/2 w-0 flex justify-center" aria-hidden>
-                    <span className="absolute left-0 top-0 h-1.5 w-1.5 rounded-full bg-[#F4F1D8]/70 -translate-x-1/2" />
+                    <span className="absolute left-0 top-0 h-1.5 w-1.5 rounded-full bg-heading/70 -translate-x-1/2" />
                   </span>
                     <div>
-                      <div className="text-white/90 font-semibold text-base tracking-tight">{c.label}</div>
-                      <div className="mt-0.5 text-white/50 text-sm">{c.meta}</div>
-                      <div className={`mt-1.5 text-white/45 text-[11px] tracking-widest ${dmMono.className}`}>
+                      <div className="text-foreground/90 font-semibold text-base tracking-tight">{c.label}</div>
+                      <div className="mt-0.5 text-text-muted-2 text-sm">{c.meta}</div>
+                      <div className={`mt-1.5 text-text-muted-2 text-[11px] tracking-widest ${dmMono.className}`}>
                         {c.stack}
                       </div>
                     </div>
@@ -521,7 +527,7 @@ export default function ServicesSection() {
       <div ref={arrowsRef} className="absolute left-14 bottom-14 z-20 flex items-center gap-3">
         <button
           onClick={goPrev}
-          className="h-10 w-10 rounded-full border border-white/10 bg-white/5 backdrop-blur text-white/70 hover:text-white transition flex items-center justify-center"
+          className="h-10 w-10 rounded-full border border-border-subtle bg-foreground/5 backdrop-blur text-text-muted hover:text-foreground transition flex items-center justify-center"
           aria-label="Previous"
         >
           ←
@@ -529,7 +535,7 @@ export default function ServicesSection() {
 
         <button
           onClick={goNext}
-          className="h-10 w-10 rounded-full border border-white/10 bg-white/5 backdrop-blur text-white/70 hover:text-white transition flex items-center justify-center"
+          className="h-10 w-10 rounded-full border border-border-subtle bg-foreground/5 backdrop-blur text-text-muted hover:text-foreground transition flex items-center justify-center"
           aria-label="Next"
         >
           →
@@ -540,7 +546,7 @@ export default function ServicesSection() {
       <div ref={pauseRef} className="absolute right-14 bottom-14 z-20 flex items-center gap-3">
         <button
           onClick={() => setPaused((v) => !v)}
-          className="h-10 w-10 rounded-full border border-white/10 bg-white/5 backdrop-blur text-white/70 hover:text-white transition flex items-center justify-center"
+          className="h-10 w-10 rounded-full border border-border-subtle bg-foreground/5 backdrop-blur text-text-muted hover:text-foreground transition flex items-center justify-center"
           aria-label={paused ? "Play" : "Pause"}
         >
           {paused ? (

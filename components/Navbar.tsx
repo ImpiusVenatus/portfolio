@@ -28,10 +28,16 @@ function NavLink({ label, href, onInternalNavigate }: NavItem & { onInternalNavi
   return (
     <a href={href} onClick={handleClick} className="group relative inline-flex items-center justify-center">
       <span className="pointer-events-none absolute -left-4 top-1/2 -translate-y-1/2 opacity-0 -translate-x-1 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0">
-        <Image src="/icons/hero-bracket.svg" alt="" width={6} height={6} className="opacity-90" />
+        <Image
+          src="/icons/hero-bracket.svg"
+          alt=""
+          width={6}
+          height={6}
+          className="opacity-90 invert dark:invert-0"
+        />
       </span>
 
-      <span className="text-white/70 transition-colors duration-200 group-hover:text-white">
+      <span className="text-text-muted transition-colors duration-200 group-hover:text-foreground">
         {label}
       </span>
 
@@ -41,7 +47,7 @@ function NavLink({ label, href, onInternalNavigate }: NavItem & { onInternalNavi
           alt=""
           width={6}
           height={6}
-          className="opacity-90 rotate-180"
+          className="opacity-90 rotate-180 invert dark:invert-0"
         />
       </span>
     </a>
@@ -65,7 +71,7 @@ function MenuIconButton({
         fixed top-10 right-14 z-[9999]
         h-12 w-12
         inline-flex items-center justify-center
-        text-white/90 hover:text-white
+        text-foreground/90 hover:text-foreground
         transition
         cursor-pointer
       "
@@ -242,7 +248,7 @@ export default function Navbar() {
       >
         <TransitionLink
           href="/"
-          className={`flex items-center gap-2 tracking-widest text-sm opacity-90 ${dmMono.className} text-white/90 hover:text-white transition-colors`}
+          className={`flex items-center gap-2 tracking-widest text-sm opacity-90 ${dmMono.className} text-foreground/90 hover:text-foreground transition-colors`}
         >
           <span>||</span>
           <span className="text-lg">Md Sadman Hossain</span>
@@ -276,8 +282,8 @@ export default function Navbar() {
           items={overlayMenuItems}
           buttonLeft="calc(100vw - 5rem)"
           buttonTop="2.5rem"
-          overlayBackground="#101318"
-          textColor="#F4F1D8"
+          overlayBackground="var(--mobile-menu-bg)"
+          textColor="var(--mobile-menu-text)"
           fontSize="lg"
           fontFamily={dmMono.style?.fontFamily ?? '"DM Mono", monospace'}
           fontWeight="normal"

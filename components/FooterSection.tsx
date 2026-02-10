@@ -187,7 +187,7 @@ export default function FooterSection() {
     <footer
       id="contact"
       ref={sectionRef}
-      className="relative z-20 w-full h-screen flex flex-col bg-[#101318] pt-24 pb-12 px-10 md:px-14"
+      className="relative z-20 w-full h-screen flex flex-col bg-section-bg pt-24 pb-12 px-10 md:px-14"
     >
       <div className="max-w-7xl mx-auto w-full flex flex-col flex-1 min-h-0">
         {/* Top: CTA + button left; email, socials, time, back to top right */}
@@ -195,20 +195,26 @@ export default function FooterSection() {
           <div>
             <p
               ref={ctaTextRef}
-              className="text-white/90 text-xl md:text-2xl lg:text-3xl leading-relaxed max-w-2xl"
+              className="text-foreground/90 text-xl md:text-2xl lg:text-3xl leading-relaxed max-w-2xl"
             >
               Let&apos;s build and ship something remarkable. Open to agency collaborations, freelance work, and fully remote full-time opportunities.
             </p>
             <a
               ref={ctaButtonRef}
               href={`mailto:${EMAIL}`}
-              className={`group relative ml-4 mt-10 w-fit inline-flex items-center justify-center gap-2 text-white/80 hover:text-white transition-colors duration-200 ${dmMono.className} tracking-widest text-xs`}
+              className={`group relative ml-4 mt-10 w-fit inline-flex items-center justify-center gap-2 text-text-muted hover:text-foreground transition-colors duration-200 ${dmMono.className} tracking-widest text-xs`}
             >
               <span className="pointer-events-none absolute -left-4 top-1/2 -translate-y-1/2 opacity-0 -translate-x-1 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0">
-                <Image src="/icons/hero-bracket.svg" alt="" width={6} height={6} className="opacity-90" />
+                <Image
+                  src="/icons/hero-bracket.svg"
+                  alt=""
+                  width={6}
+                  height={6}
+                  className="opacity-90 invert dark:invert-0"
+                />
               </span>
               <span>LET&apos;S WORK TOGETHER</span>
-              <span className="inline-block text-white/60 transition-transform duration-300 ease-out group-hover:rotate-[360deg] group-hover:scale-110">
+              <span className="inline-block text-text-muted-2 transition-transform duration-300 ease-out group-hover:rotate-[360deg] group-hover:scale-110">
                 ↗
               </span>
               <span className="pointer-events-none absolute -right-4 top-1/2 -translate-y-1/2 opacity-0 translate-x-1 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0">
@@ -217,55 +223,55 @@ export default function FooterSection() {
                   alt=""
                   width={6}
                   height={6}
-                  className="opacity-90 rotate-180"
+                  className="opacity-90 rotate-180 invert dark:invert-0"
                 />
               </span>
             </a>
           </div>
           <div
             ref={footerRef}
-            className={`flex flex-col gap-4 ${dmMono.className} text-xs tracking-widest text-white/60 lg:text-right`}
+            className={`flex flex-col gap-4 ${dmMono.className} text-xs tracking-widest text-text-muted-2 lg:text-right`}
           >
-            <a ref={emailRef} href={`mailto:${EMAIL}`} className="text-white/70 hover:text-white transition-colors uppercase">
+            <a ref={emailRef} href={`mailto:${EMAIL}`} className="text-text-muted hover:text-foreground transition-colors uppercase">
               {EMAIL}
             </a>
             <div className="flex flex-col gap-2 lg:items-end">
-              <a ref={instagramRef} href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+              <a ref={instagramRef} href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
                 INSTAGRAM
               </a>
-              <a ref={linkedinRef} href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+              <a ref={linkedinRef} href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
                 LINKEDIN
               </a>
             </div>
-            <div className="text-white/70 tabular-nums">{bstTime}</div>
+            <div className="text-text-muted tabular-nums">{bstTime}</div>
           </div>
         </div>
 
         {/* Name: 3 full-width horizontal lines + 2 vertical lines. Text in container, HOSSAIN right-aligned. */}
         <div ref={nameWrapRef} className="relative mt-10 pt-4 overflow-visible flex-1 flex flex-col justify-center">
-          <div className="h-px bg-white/15 w-screen relative left-1/2 -translate-x-1/2" aria-hidden />
+          <div className="h-px bg-foreground/15 w-screen relative left-1/2 -translate-x-1/2" aria-hidden />
           <div className="relative w-full min-w-0 overflow-visible">
             <div
-              className={`flex flex-wrap items-center justify-start gap-1 md:gap-2 lg:gap-3 min-w-0 text-white/90 ${raderFont.className}`}
+              className={`flex flex-wrap items-center justify-start gap-1 md:gap-2 lg:gap-3 min-w-0 text-foreground/90 ${raderFont.className}`}
               style={{ fontSize: "clamp(4rem, 14vw, 11rem)", letterSpacing: "0.0em" }}
             >
               {NAME_LETTERS.slice(0, 6).map((char, i) => (
                 <div key={`s-${i}`} ref={(el) => { letterRefs.current[i] = el; }} className="inline-block opacity-0" data-letter={char}>{char}</div>
               ))}
             </div>
-            <div className="h-px bg-white/15 w-screen relative left-1/2 -translate-x-1/2" aria-hidden />
+            <div className="h-px bg-foreground/15 w-screen relative left-1/2 -translate-x-1/2" aria-hidden />
             <div
-              className={`flex flex-wrap items-center justify-end gap-1 md:gap-2 lg:gap-3 min-w-0 text-white/90 ${raderFont.className}`}
+              className={`flex flex-wrap items-center justify-end gap-1 md:gap-2 lg:gap-3 min-w-0 text-foreground/90 ${raderFont.className}`}
               style={{ fontSize: "clamp(4rem, 14vw, 11rem)", letterSpacing: "0.0em" }}
             >
               {NAME_LETTERS.slice(6, 13).map((char, i) => (
                 <div key={`h-${i}`} ref={(el) => { letterRefs.current[6 + i] = el; }} className="inline-block opacity-0" data-letter={char}>{char}</div>
               ))}
             </div>
-            <div className="absolute left-0 -top-3 -bottom-3 w-px bg-white/15" aria-hidden />
-            <div className="absolute right-0 -top-3 -bottom-3 w-px bg-white/15" aria-hidden />
+            <div className="absolute left-0 -top-3 -bottom-3 w-px bg-foreground/15" aria-hidden />
+            <div className="absolute right-0 -top-3 -bottom-3 w-px bg-foreground/15" aria-hidden />
           </div>
-          <div className="h-px bg-white/15 w-screen relative left-1/2 -translate-x-1/2" aria-hidden />
+          <div className="h-px bg-foreground/15 w-screen relative left-1/2 -translate-x-1/2" aria-hidden />
         </div>
 
         {/* Back to top: bottom right, arrow button with growing/fading pulse bg */}
@@ -274,10 +280,10 @@ export default function FooterSection() {
             ref={backToTopRef}
             type="button"
             onClick={scrollToTop}
-            className="relative cursor-pointer flex items-center justify-center w-12 h-12 rounded-full bg-white/10 border border-white/30 text-white/80 hover:text-white hover:border-white/50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white/40 overflow-visible"
+            className="relative cursor-pointer flex items-center justify-center w-12 h-12 rounded-full bg-foreground/10 border border-foreground/30 text-text-muted hover:text-foreground hover:border-foreground/50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-foreground/40 overflow-visible"
             aria-label="Back to top"
           >
-            <span className="absolute inset-0 rounded-full bg-white/20 pointer-events-none animate-back-to-top-pulse" aria-hidden />
+            <span className="absolute inset-0 rounded-full bg-foreground/20 pointer-events-none animate-back-to-top-pulse" aria-hidden />
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="relative z-10 shrink-0">
               <path d="M18 15l-6-6-6 6" />
             </svg>

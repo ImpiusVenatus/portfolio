@@ -1,6 +1,7 @@
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import PreloaderGate from "@/components/PreloaderGate";
 import PageTransitionProvider from "@/components/PageTransitionProvider";
+import { ToggleTheme } from "@/components/lightswind/toggle-theme";
 import "./globals.css";
 import { DM_Mono, Manrope, Space_Grotesk } from "next/font/google";
 import localFont from "next/font/local";
@@ -38,9 +39,14 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <title>Sadman Hossain</title>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var t=localStorage.getItem('theme');if(t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');else document.documentElement.classList.remove('dark');})();`,
+          }}
+        />
       </head>
       <body
-        className={`bg-[#070C10] text-white overflow-x-hidden ${manrope.className}`}
+        className={`bg-background text-foreground overflow-x-hidden ${manrope.className}`}
       >
         <script
           dangerouslySetInnerHTML={{
@@ -54,6 +60,13 @@ export default function RootLayout({
             </PageTransitionProvider>
           </SmoothScrollProvider>
         </PreloaderGate>
+        {/* Theme toggle: outside gate so always visible, above preloader/nav */}
+        <div className="fixed bottom-6 left-6 z-[10002] flex items-center justify-center">
+          <ToggleTheme
+            className="rounded-full bg-foreground/15 text-foreground hover:bg-foreground/25 backdrop-blur-sm p-2.5 border border-border-subtle"
+            aria-label="Toggle light/dark mode"
+          />
+        </div>
       </body>
     </html>
   );

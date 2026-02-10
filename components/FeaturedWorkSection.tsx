@@ -156,7 +156,7 @@ export default function FeaturedWorkSection() {
     <section
       id="projects"
       ref={sectionRef}
-      className="relative z-20 min-h-screen w-full bg-[#101318] flex flex-col items-center justify-center py-24 px-8 overflow-hidden"
+      className="relative z-20 min-h-screen w-full bg-section-bg flex flex-col items-center justify-center py-24 px-8 overflow-hidden"
     >
       {/* Arc: full viewport width, left edge to right edge of screen */}
       <div
@@ -185,7 +185,7 @@ export default function FeaturedWorkSection() {
       <div className="relative flex items-center justify-center w-full max-w-6xl h-[420px] md:h-[480px]">
         <div
           ref={centerCardRef}
-          className="absolute z-10 w-[320px] h-[400px] md:w-[360px] md:h-[440px] rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-white/5"
+          className="absolute z-10 w-[320px] h-[400px] md:w-[360px] md:h-[440px] rounded-2xl overflow-hidden shadow-2xl border border-border-subtle bg-foreground/5"
         >
           <img
             src="https://images.unsplash.com/photo-1545127398-14699f92334b?w=720&q=80"
@@ -196,7 +196,7 @@ export default function FeaturedWorkSection() {
 
         <div
           ref={leftCardRef}
-          className="absolute z-0 w-[280px] h-[360px] md:w-[320px] md:h-[400px] rounded-2xl overflow-hidden shadow-xl border border-white/10 bg-white/5"
+          className="absolute z-0 w-[280px] h-[360px] md:w-[320px] md:h-[400px] rounded-2xl overflow-hidden shadow-xl border border-border-subtle bg-foreground/5"
           style={{ transformOrigin: "center center" }}
         >
           <img
@@ -208,7 +208,7 @@ export default function FeaturedWorkSection() {
 
         <div
           ref={rightCardRef}
-          className="absolute z-0 w-[280px] h-[360px] md:w-[320px] md:h-[400px] rounded-2xl overflow-hidden shadow-xl border border-white/10 bg-white/5"
+          className="absolute z-0 w-[280px] h-[360px] md:w-[320px] md:h-[400px] rounded-2xl overflow-hidden shadow-xl border border-border-subtle bg-foreground/5"
           style={{ transformOrigin: "center center" }}
         >
           <img
@@ -223,11 +223,11 @@ export default function FeaturedWorkSection() {
         ref={textWrapRef}
         className="relative z-20 mt-12 text-center max-w-xl mx-auto"
       >
-        <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-white">
+        <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
           Featured Work
         </h2>
         <p
-          className={`mt-3 text-white/70 text-base md:text-lg leading-relaxed ${dmMono.className}`}
+          className={`mt-3 text-text-muted text-base md:text-lg leading-relaxed ${dmMono.className}`}
         >
           Selected app and product builds — from fintech and AI platforms to
           clean, scalable mobile and web experiences.

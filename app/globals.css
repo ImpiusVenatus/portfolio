@@ -8,6 +8,12 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-page-bg: var(--page-bg);
+  --color-section-bg: var(--section-bg);
+  --color-heading: var(--heading);
+  --color-text-muted: var(--text-muted);
+  --color-text-muted-2: var(--text-muted-2);
+  --color-border-subtle: var(--border-subtle);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -64,6 +70,19 @@
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
+  /* Portfolio theme (light) */
+  --page-bg: #f2f2f2;
+  --section-bg: #ffffff;
+  --heading: #1a1a1a;
+  --text-muted: rgba(0, 0, 0, 0.6);
+  --text-muted-2: rgba(0, 0, 0, 0.45);
+  --border-subtle: rgba(0, 0, 0, 0.1);
+  /* Service section progress ring: dark in light mode */
+  --progress-track: rgba(0, 0, 0, 0.18);
+  --progress-arc: rgba(0, 0, 0, 0.88);
+  /* Mobile menu: hero-style dark in light mode */
+  --mobile-menu-bg: #101318;
+  --mobile-menu-text: #f4f1d8;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -96,8 +115,21 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
+  --background: #070c10;
+  --foreground: #f4f1d8;
+  /* Portfolio theme (dark) */
+  --page-bg: #070c10;
+  --section-bg: #101318;
+  --heading: #f4f1d8;
+  --text-muted: rgba(255, 255, 255, 0.7);
+  --text-muted-2: rgba(255, 255, 255, 0.5);
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  /* Service section progress ring: light in dark mode */
+  --progress-track: rgba(255, 255, 255, 0.12);
+  --progress-arc: rgba(244, 241, 216, 0.92);
+  /* Mobile menu: white in dark mode */
+  --mobile-menu-bg: #ffffff;
+  --mobile-menu-text: #1a1a1a;
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);

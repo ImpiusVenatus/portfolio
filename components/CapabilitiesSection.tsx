@@ -365,13 +365,13 @@ export default function CapabilitiesSection() {
     <section
       id="capabilities"
       ref={sectionRef}
-      className="relative z-20 min-h-screen w-full bg-[#101318] flex flex-col overflow-hidden"
+      className="relative z-20 min-h-screen w-full bg-section-bg flex flex-col overflow-hidden"
     >
       <div className="relative z-10 flex items-center justify-center gap-8 pt-16 pb-6">
         <button
           type="button"
           onClick={() => setActiveTab("core")}
-          className={`cursor-pointer ${dmMono.className} text-sm tracking-widest text-white/90 hover:text-white transition ${
+          className={`cursor-pointer ${dmMono.className} text-sm tracking-widest text-foreground/90 hover:text-foreground transition ${
             activeTab === "core" ? "opacity-100" : "opacity-60"
           }`}
         >
@@ -380,7 +380,7 @@ export default function CapabilitiesSection() {
         <button
           type="button"
           onClick={() => setActiveTab("tech")}
-          className={`cursor-pointer ${dmMono.className} text-sm tracking-widest text-white/90 hover:text-white transition ${
+          className={`cursor-pointer ${dmMono.className} text-sm tracking-widest text-foreground/90 hover:text-foreground transition ${
             activeTab === "tech" ? "opacity-100" : "opacity-60"
           }`}
         >
@@ -389,7 +389,7 @@ export default function CapabilitiesSection() {
         <button
           type="button"
           onClick={() => setActiveTab("projects")}
-          className={`cursor-pointer ${dmMono.className} text-sm tracking-widest text-white/90 hover:text-white transition ${
+          className={`cursor-pointer ${dmMono.className} text-sm tracking-widest text-foreground/90 hover:text-foreground transition ${
             activeTab === "projects" ? "opacity-100" : "opacity-60"
           }`}
         >
@@ -399,7 +399,7 @@ export default function CapabilitiesSection() {
 
       <div
         ref={containerRef}
-        className="relative z-10 flex-1 min-h-[60vh] mx-6 mb-8 rounded-2xl border border-white/15 bg-white overflow-hidden cursor-grab active:cursor-grabbing"
+        className="relative z-10 flex-1 min-h-[60vh] mx-6 mb-8 rounded-2xl border border-border-subtle bg-card overflow-hidden cursor-grab active:cursor-grabbing"
       >
         <div
           ref={blocksWrapRef}

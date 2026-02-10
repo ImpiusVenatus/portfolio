@@ -3,8 +3,6 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
-const HERO_BG = "#101318";
-
 export default function Preloader({ onComplete }: { onComplete: () => void }) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const progressFillRef = useRef<HTMLDivElement | null>(null);
@@ -104,7 +102,7 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
   return (
     <div
       ref={wrapRef}
-      className="fixed inset-0 z-[10000] flex flex-col items-center justify-center gap-4 bg-white"
+      className="fixed inset-0 z-[10000] flex flex-col items-center justify-center gap-4 bg-background"
       aria-hidden
     >
       {/* Percentage text above progress bar */}
@@ -123,11 +121,11 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
         <div
           ref={progressFillRef}
           className="h-full w-full rounded-full"
-          style={{ backgroundColor: HERO_BG }}
+          style={{ backgroundColor: "var(--section-bg)" }}
         />
       </div>
 
-      {/* Circle that grows to fill screen (hero bg color) - hidden until GSAP */}
+      {/* Circle that grows to fill screen (section bg) - hidden until GSAP */}
       <div
         ref={circleRef}
         className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0"
@@ -135,7 +133,7 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
       >
         <div
           className="w-[100vmax] h-[100vmax] rounded-full"
-          style={{ backgroundColor: HERO_BG }}
+          style={{ backgroundColor: "var(--section-bg)" }}
         />
       </div>
     </div>

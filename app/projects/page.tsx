@@ -3,7 +3,7 @@ import FeaturedWorkSection from "@/components/FeaturedWorkSection";
 
 export default function ProjectsPage() {
   return (
-    <main className="min-h-screen bg-[#070C10]">
+    <main className="min-h-screen bg-page-bg">
       <Navbar />
       <FeaturedWorkSection />
     </main>

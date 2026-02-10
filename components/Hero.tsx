@@ -268,7 +268,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section id="hero" ref={sectionRef} className="relative h-screen bg-[#101318]">
+    <section id="hero" ref={sectionRef} className="relative h-screen bg-section-bg">
       <div className="relative h-screen overflow-hidden px-14 pt-10 pb-16">
         {/* UI LAYER */}
         <div ref={uiRef} className="relative h-full flex flex-col z-30">
@@ -280,15 +280,15 @@ export default function Hero() {
                 alt=""
                 width={50}
                 height={80}
-                className="opacity-90 hero-bracket-jiggle"
+                className="opacity-90 hero-bracket-jiggle invert dark:invert-0"
                 priority
               />
 
               <div className="text-center">
-                <p className={`text-[11px] tracking-[0.25em] mb-3 ${dmMono.className}`}>
+                <p className={`text-[11px] tracking-[0.25em] mb-3 ${dmMono.className} text-heading`}>
                   HELLO!
                 </p>
-                <p className="text-sm text-white/70 leading-relaxed font-medium">
+                <p className="text-sm text-text-muted leading-relaxed font-medium">
                   I am Md Sadman Hossain <br />
                   alias ImpiusVenatus — <br />
                   web developer & engineer.
@@ -301,7 +301,7 @@ export default function Hero() {
                   alt=""
                   width={50}
                   height={80}
-                  className="opacity-90 block"
+                  className="opacity-90 block invert dark:invert-0"
                   priority
                 />
               </div>
@@ -313,13 +313,13 @@ export default function Hero() {
             <div className="flex items-end justify-between">
               <h1
                 ref={softwareRef}
-                className={`${spaceGrotesk.className} font-bold text-[200px] leading-[0.82] text-[#F4F1D8] drop-shadow-xl`}
+                className={`${spaceGrotesk.className} font-bold text-[200px] leading-[0.82] text-heading drop-shadow-xl`}
               >
                 Software
               </h1>
               <h1
                 ref={devRef}
-                className={`${spaceGrotesk.className} font-bold text-[200px] leading-[0.82] text-[#F4F1D8] drop-shadow-xl`}
+                className={`${spaceGrotesk.className} font-bold text-[200px] leading-[0.82] text-heading drop-shadow-xl`}
               >
                 dev
               </h1>
@@ -334,7 +334,7 @@ export default function Hero() {
         >
           <div
             ref={innerRef}
-            className="relative w-full h-full rounded-xl overflow-hidden will-change-transform border border-white/10"
+            className="relative w-full h-full rounded-xl overflow-hidden will-change-transform border border-border-subtle"
           >
             <Image
               src="/hero-card.png"
@@ -347,7 +347,7 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* LEFT TEXT + RIGHT COMPARE - hidden initially to prevent flash before GSAP */}
+        {/* From Idea to Production: text color only — stays light (no theme change for this text) */}
         <div ref={processTextRef} className="fixed inset-0 z-[200] pointer-events-none opacity-0">
           <div className="absolute left-24 top-1/2 -translate-y-1/2">
             <div className={`${spaceGrotesk.className} text-[#F4F1D8] tracking-tight`}>

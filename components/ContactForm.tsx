@@ -24,8 +24,8 @@ export default function ContactForm() {
     }
   };
 
-  const inputClass = `w-full px-4 py-3 rounded-xl border border-white/15 bg-white/5 text-white placeholder-white/40 focus:outline-none focus:border-white/30 transition-colors ${dmMono.className} text-sm`;
-  const labelClass = `block text-left text-white/60 text-xs tracking-widest mb-2 ${dmMono.className}`;
+  const inputClass = `w-full px-4 py-3 rounded-xl border border-border-subtle bg-foreground/5 text-foreground placeholder-text-muted-2 focus:outline-none focus:border-foreground/30 transition-colors ${dmMono.className} text-sm`;
+  const labelClass = `block text-left text-text-muted-2 text-xs tracking-widest mb-2 ${dmMono.className}`;
 
   return (
     <form onSubmit={handleSubmit} className="mt-12 w-full max-w-md mx-auto text-left">
@@ -92,7 +92,7 @@ export default function ContactForm() {
       <button
         type="submit"
         disabled={status === "sending"}
-        className={`mt-8 w-full py-4 rounded-xl border border-white/20 bg-white/10 text-white/90 hover:bg-white/15 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${dmMono.className} text-xs tracking-widest uppercase`}
+        className={`mt-8 w-full py-4 rounded-xl border border-border-subtle bg-foreground/10 text-foreground/90 hover:bg-foreground/15 hover:text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${dmMono.className} text-xs tracking-widest uppercase`}
       >
         {status === "sending" ? "SENDING…" : "SEND MESSAGE"}
       </button>

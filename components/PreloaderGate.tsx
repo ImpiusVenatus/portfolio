@@ -36,7 +36,7 @@ export default function PreloaderGate({
     <>
       {/* Cover content until we've decided (prevents flash of hero on first load) */}
       {!hasDecided && (
-        <div className="fixed inset-0 z-[10001] bg-white" aria-hidden />
+        <div className="fixed inset-0 z-[10001] bg-background" aria-hidden />
       )}
       {showPreloader && <Preloader onComplete={handleComplete} />}
       {children}
