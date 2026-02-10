@@ -57,9 +57,11 @@ function NavLink({ label, href, onInternalNavigate }: NavItem & { onInternalNavi
 function MenuIconButton({
   btnRef,
   onClick,
+  open,
 }: {
   btnRef: React.RefObject<HTMLButtonElement | null>;
   onClick: () => void;
+  open: boolean;
 }) {
   return (
     <button
@@ -67,14 +69,18 @@ function MenuIconButton({
       type="button"
       aria-label="Open menu"
       onClick={onClick}
-      className="
+      className={`
         fixed top-10 right-14 z-[9999]
         h-12 w-12
         inline-flex items-center justify-center
-        text-foreground/90 hover:text-foreground
         transition
         cursor-pointer
-      "
+        ${
+          open
+            ? "text-white dark:text-[#101318]" // CROSS: light in light mode, dark in dark mode
+            : "text-[#101318] dark:text-white"  // HAMBURGER: reversed
+        }
+      `}
     >
       <span className="relative block w-5 h-4">
         <span className="menu-line-top absolute left-0 top-0 block h-[2px] w-full bg-current origin-center" />
@@ -267,7 +273,7 @@ export default function Navbar() {
       </div>
 
       {/* Menu icon */}
-      <MenuIconButton btnRef={menuBtnRef} onClick={onMenuClick} />
+      <MenuIconButton btnRef={menuBtnRef} onClick={onMenuClick} open={open} />
 
       {/* Mobile menu overlay (lightswind hamburger UI) */}
       <div

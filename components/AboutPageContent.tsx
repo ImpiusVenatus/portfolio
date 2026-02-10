@@ -1,12 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { MapPin, Mail, Phone, ChevronDown } from "lucide-react";
 import TransitionLink from "@/components/TransitionLink";
-import { dmMono } from "@/app/layout";
+import { dmMono, raderFont } from "@/app/layout";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,6 +16,17 @@ const EXIT_DURATION = 0.3;
 
 const LOGO_SIZE = 96;
 const LOGO_SIZE_SM = 80;
+
+const ABOUT_NAME_LETTERS = ["S", "A", "D", "M", "A", "N", "H", "O", "S", "S", "A", "I", "N"] as const;
+
+function shuffle<T>(arr: T[]): T[] {
+  const out = [...arr];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
 
 const TIMELINE_ITEMS: {
   side: "left" | "right";
@@ -125,6 +136,11 @@ export default function AboutPageContent() {
   const lineRef = useRef<HTMLDivElement | null>(null);
   const itemRowRefs = useRef<(HTMLLIElement | null)[]>([]);
   const backLinkRef = useRef<HTMLDivElement | null>(null);
+  const aboutLetterRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const aboutTiltedIndices = useMemo(
+    () => shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]).slice(0, 6),
+    []
+  );
 
   useEffect(() => {
     const headerEl = headerRef.current;
@@ -143,10 +159,43 @@ export default function AboutPageContent() {
       ease: "power2.out",
       paused: true,
     });
+    // Name letters (About header) – same animation style as footer
+    const nameLetters = aboutLetterRefs.current.filter(Boolean) as HTMLElement[];
+    let nameTl: gsap.core.Timeline | null = null;
+    if (nameLetters.length === ABOUT_NAME_LETTERS.length) {
+      gsap.set(nameLetters, { autoAlpha: 0 });
+      const tiltDeg = 18;
+      aboutTiltedIndices.forEach((i) => {
+        if (nameLetters[i]) {
+          gsap.set(nameLetters[i], { rotation: Math.random() > 0.5 ? tiltDeg : -tiltDeg });
+        }
+      });
+      nameTl = gsap.timeline({ paused: true });
+      const letterStagger = 0.14;
+      const letterStart = 0.6;
+      nameLetters.forEach((el, i) => {
+        nameTl!.to(el, { autoAlpha: 1, duration: 0.4, ease: "power2.out" }, letterStart + i * letterStagger);
+      });
+      const untiltOrder = shuffle([...aboutTiltedIndices]);
+      const untiltStart = letterStart + ABOUT_NAME_LETTERS.length * letterStagger + 0.4;
+      untiltOrder.forEach((idx, i) => {
+        if (nameLetters[idx]) {
+          nameTl!.to(
+            nameLetters[idx],
+            { rotation: 0, duration: 0.65, ease: "back.out(1.4)" },
+            untiltStart + i * 0.12
+          );
+        }
+      });
+    }
+
     const stHeaderEnter = ScrollTrigger.create({
       trigger: headerEl,
       start: "top 82%",
-      onEnter: () => headerIn.play(),
+      onEnter: () => {
+        headerIn.play();
+        nameTl?.play();
+      },
     });
     const stHeaderExit = ScrollTrigger.create({
       trigger: headerEl,
@@ -155,7 +204,10 @@ export default function AboutPageContent() {
     });
     // If header is already in view on load, play entry
     requestAnimationFrame(() => {
-      if (headerEl.getBoundingClientRect().top < window.innerHeight * 0.85) headerIn.play();
+      if (headerEl.getBoundingClientRect().top < window.innerHeight * 0.85) {
+        headerIn.play();
+        nameTl?.play();
+      }
     });
 
     if (!sectionEl || !lineEl) return;
@@ -247,9 +299,50 @@ export default function AboutPageContent() {
         <div className={`text-[10px] tracking-[0.28em] text-foreground/45 ${dmMono.className}`}>
           ABOUT ME
         </div>
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-heading tracking-tight">
-          Md Sadman Hossain
-        </h1>
+        {/* Name lockup: exact footer style and animation (SADMAN / HOSSAIN) */}
+        <div className="mt-2">
+          <div className="h-px bg-foreground/15 w-full" aria-hidden />
+          <div className="relative w-full min-w-0 overflow-visible">
+            <div
+              className={`flex flex-wrap items-center justify-start gap-1 md:gap-2 lg:gap-3 min-w-0 text-foreground/90 ${raderFont.className}`}
+              style={{ fontSize: "clamp(4rem, 14vw, 11rem)", letterSpacing: "0.0em" }}
+            >
+              {ABOUT_NAME_LETTERS.slice(0, 6).map((char, i) => (
+                <div
+                  key={`about-s-${i}`}
+                  ref={(el) => {
+                    aboutLetterRefs.current[i] = el;
+                  }}
+                  className="inline-block opacity-0"
+                  data-letter={char}
+                >
+                  {char}
+                </div>
+              ))}
+            </div>
+            <div className="h-px bg-foreground/15 w-full" aria-hidden />
+            <div
+              className={`flex flex-wrap items-center justify-end gap-1 md:gap-2 lg:gap-3 min-w-0 text-foreground/90 ${raderFont.className}`}
+              style={{ fontSize: "clamp(4rem, 14vw, 11rem)", letterSpacing: "0.0em" }}
+            >
+              {ABOUT_NAME_LETTERS.slice(6, 13).map((char, i) => (
+                <div
+                  key={`about-h-${i}`}
+                  ref={(el) => {
+                    aboutLetterRefs.current[6 + i] = el;
+                  }}
+                  className="inline-block opacity-0"
+                  data-letter={char}
+                >
+                  {char}
+                </div>
+              ))}
+            </div>
+            <div className="absolute left-0 -top-3 -bottom-3 w-px bg-foreground/15" aria-hidden />
+            <div className="absolute right-0 -top-3 -bottom-3 w-px bg-foreground/15" aria-hidden />
+          </div>
+          <div className="h-px bg-foreground/15 w-full" aria-hidden />
+        </div>
         <div className="flex flex-col gap-2 text-foreground/60 text-sm md:text-base">
           <span className="flex items-center gap-2">
             <MapPin className="shrink-0 w-4 h-4 text-foreground/50" aria-hidden />

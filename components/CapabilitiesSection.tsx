@@ -399,7 +399,7 @@ export default function CapabilitiesSection() {
 
       <div
         ref={containerRef}
-        className="relative z-10 flex-1 min-h-[60vh] mx-6 mb-8 rounded-2xl border border-border-subtle bg-card overflow-hidden cursor-grab active:cursor-grabbing"
+        className="relative z-10 flex-1 min-h-[60vh] mx-6 mb-8 rounded-2xl border border-border-subtle bg-white overflow-hidden cursor-grab active:cursor-grabbing"
       >
         <div
           ref={blocksWrapRef}

@@ -80,9 +80,9 @@
   /* Service section progress ring: dark in light mode */
   --progress-track: rgba(0, 0, 0, 0.18);
   --progress-arc: rgba(0, 0, 0, 0.88);
-  /* Mobile menu: hero-style dark in light mode */
+  /* Mobile menu (light mode): hero bg dark, white icon/text */
   --mobile-menu-bg: #101318;
-  --mobile-menu-text: #f4f1d8;
+  --mobile-menu-text: #ffffff;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -127,9 +127,9 @@
   /* Service section progress ring: light in dark mode */
   --progress-track: rgba(255, 255, 255, 0.12);
   --progress-arc: rgba(244, 241, 216, 0.92);
-  /* Mobile menu: white in dark mode */
-  --mobile-menu-bg: #ffffff;
-  --mobile-menu-text: #1a1a1a;
+  /* Mobile menu (dark mode): light cream bg, dark icon/text */
+  --mobile-menu-bg: #f4f1d8;
+  --mobile-menu-text: #101318;
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
