@@ -6,7 +6,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { dmMono, spaceGrotesk } from "@/app/layout";
 import { ChevronDown } from "lucide-react";
-import FloatingTechLogos from "@/components/FloatingTechLogos";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -151,7 +150,7 @@ export default function ServicesPageContent() {
             trigger: section,
             start: "top 82%",
             end: "top 30%",
-            toggleActions: "play none none none",
+            toggleActions: "play none play reverse",
           },
         });
 
@@ -159,7 +158,6 @@ export default function ServicesPageContent() {
         tl.to(line, { opacity: 1, scaleX: 1, duration: 0.6, ease: "power2.out", transformOrigin: "left center" }, 0.1);
         tl.to(heading, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 0.15);
         tl.to(desc, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 0.25);
-        // Cards: alternating slide-up with slight 3D tilt release
         cards.forEach((card, j) => {
           tl.to(
             card,
@@ -178,14 +176,13 @@ export default function ServicesPageContent() {
       {/* Intro: full viewport height so scroll triggers below fire at the right time */}
       <section
         ref={introRef}
-        className="relative h-screen flex flex-col items-center justify-center text-center px-6 bg-section-bg overflow-hidden"
+        className="relative min-h-screen h-screen flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-8 lg:px-14 pt-[max(2.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))] bg-section-bg overflow-hidden"
       >
-        <FloatingTechLogos containerRef={introRef} />
-        <div className="relative z-10">
-        <p className={`text-[10px] tracking-[0.28em] text-text-muted uppercase ${dmMono.className} mb-4`}>
+        <div className="relative z-10 w-full max-w-[95vw]">
+        <p className={`text-[10px] sm:text-[11px] tracking-[0.28em] text-text-muted uppercase ${dmMono.className} mb-3 sm:mb-4`}>
           WHAT I OFFER
         </p>
-        <h1 ref={titleRef} className={`${spaceGrotesk.className} uppercase text-4xl sm:text-5xl md:text-6xl lg:text-[164px] font-bold text-heading tracking-tight max-w-4xl`}>
+        <h1 ref={titleRef} className={`${spaceGrotesk.className} uppercase font-bold text-heading tracking-tight w-full overflow-hidden`} style={{ fontSize: "clamp(4rem, 25vmin, 35vmin)", lineHeight: 0.85, letterSpacing: "-0.02em" }}>
           {"Services".split("").map((char, i) => (
             <span key={i} className="letter inline-block">
               {char}
@@ -194,17 +191,17 @@ export default function ServicesPageContent() {
         </h1>
         <p
           ref={subtitleRef}
-          className="mt-6 max-w-xl text-text-muted text-base md:text-lg leading-relaxed"
+          className="mt-6 sm:mt-8 m-auto max-w-xl text-text-muted text-sm sm:text-base md:text-lg leading-relaxed px-2"
         >
           From frontend and backend to product and growth - focused on shipping clean, scalable work.
         </p>
         </div>
       </section>
 
-      {/* Progress line (fixed left edge) */}
+      {/* Progress line (fixed left edge) - hidden on very small screens to avoid overlap */}
       <div
         ref={progressLineRef}
-        className="fixed left-0 top-0 w-0.5 h-full bg-heading/30 origin-top z-0 pointer-events-none"
+        className="hidden sm:block fixed left-0 top-0 w-0.5 h-full bg-heading/30 origin-top z-0 pointer-events-none"
         style={{ transform: "scaleY(0)" }}
         aria-hidden
       />
@@ -217,15 +214,16 @@ export default function ServicesPageContent() {
             ref={(el) => {
               sectionRefs.current[i] = el;
             }}
-            className="relative py-20 md:py-28 px-6 md:px-12 lg:px-20 border-t border-border-subtle"
+            className="relative py-14 sm:py-20 md:py-28 px-4 sm:px-6 md:px-12 lg:px-14 xl:px-20 border-t border-border-subtle"
           >
             <div className="max-w-6xl mx-auto">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-16 items-start">
                 {/* Left: ordinal + title + description */}
                 <div className="lg:col-span-5">
                   <span
                     data-ordinal
-                    className={`block text-[clamp(4rem,12vw,8rem)] font-bold leading-none text-heading/15 ${spaceGrotesk.className}`}
+                    className={`block font-bold leading-none text-heading/15 ${spaceGrotesk.className}`}
+                    style={{ fontSize: "clamp(2.5rem, 10vw, 8rem)" }}
                   >
                     {String(i + 1).padStart(2, "0")}
                   </span>
@@ -235,16 +233,16 @@ export default function ServicesPageContent() {
                   />
                   <h2
                     data-heading
-                    className={`mt-6 ${spaceGrotesk.className} text-3xl md:text-4xl lg:text-5xl font-bold text-heading leading-tight`}
+                    className={`mt-4 sm:mt-6 ${spaceGrotesk.className} text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-heading leading-tight`}
                   >
                     {service.title}
                   </h2>
-                  <p data-desc className="mt-6 text-text-muted leading-relaxed max-w-lg">
+                  <p data-desc className="mt-4 sm:mt-6 text-text-muted text-sm sm:text-base leading-relaxed max-w-lg">
                     {service.short}
                   </p>
                   <Link
                     href={service.ctaHref}
-                    className={`group mt-8 inline-flex items-center gap-2 ${dmMono.className} text-xs tracking-[0.2em] text-text-muted hover:text-heading transition-colors`}
+                    className={`group mt-6 sm:mt-8 inline-flex items-center gap-2 ${dmMono.className} text-[11px] sm:text-xs tracking-[0.2em] text-text-muted hover:text-heading transition-colors break-words`}
                   >
                     {service.ctaLabel}
                     <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
@@ -252,18 +250,18 @@ export default function ServicesPageContent() {
                 </div>
 
                 {/* Right: cards with perspective / stagger */}
-                <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+                <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
                   {service.cards.map((card) => (
                     <div
                       key={card.label}
                       data-card
-                      className="group relative p-6 rounded-2xl bg-section-bg border border-border-subtle shadow-sm hover:shadow-md hover:border-heading/20 transition-all duration-300"
+                      className="group relative p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl bg-section-bg border border-border-subtle shadow-sm hover:shadow-md hover:border-heading/20 transition-all duration-300"
                     >
-                      <div className="text-[10px] tracking-[0.2em] text-text-muted-2 uppercase mb-2">
+                      <div className="text-[10px] tracking-[0.2em] text-text-muted-2 uppercase mb-1.5 sm:mb-2">
                         {card.label}
                       </div>
-                      <p className="text-heading font-medium text-sm md:text-base">{card.meta}</p>
-                      <p className={`mt-2 text-text-muted-2 text-xs ${dmMono.className}`}>
+                      <p className="text-heading font-medium text-sm md:text-base leading-snug">{card.meta}</p>
+                      <p className={`mt-1.5 sm:mt-2 text-text-muted-2 text-[11px] sm:text-xs ${dmMono.className} break-words`}>
                         {card.stack}
                       </p>
                     </div>
@@ -275,13 +273,13 @@ export default function ServicesPageContent() {
         ))}
         {/* Scroll down hint: bottom right, arrow bounces */}
       <div
-        className="fixed bottom-6 right-6 z-10 flex flex-col items-end gap-1 text-text-muted-2 pointer-events-none"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-10 flex flex-col items-end gap-1 text-text-muted-2 pointer-events-none"
         aria-hidden
       >
-        <span className={`text-[10px] tracking-[0.2em] uppercase ${dmMono.className}`}>
+        <span className={`text-[9px] sm:text-[10px] tracking-[0.2em] uppercase ${dmMono.className}`}>
           Scroll down
         </span>
-        <ChevronDown className="w-5 h-5 animate-bounce" strokeWidth={2} />
+        <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 animate-bounce" strokeWidth={2} />
       </div>
       </div>
     </>

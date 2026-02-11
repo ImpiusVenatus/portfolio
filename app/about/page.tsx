@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import AboutPageContent from "@/components/AboutPageContent";
+import FooterSection from "@/components/FooterSection";
 
 export default function AboutPage() {
   return (
@@ -8,6 +9,7 @@ export default function AboutPage() {
       <section className="relative z-20 min-h-screen w-full flex flex-col items-center pt-28 pb-12 px-6 sm:px-10 md:px-14 bg-section-bg">
         <AboutPageContent />
       </section>
+      <FooterSection />
     </main>
   );
 }
