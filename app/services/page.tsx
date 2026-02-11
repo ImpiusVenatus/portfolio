@@ -1,11 +1,13 @@
+import FooterSection from "@/components/FooterSection";
 import Navbar from "@/components/Navbar";
-import ServicesSection from "@/components/ServicesSection";
+import ServicesPageContent from "@/components/ServicesPageContent";
 
 export default function ServicesPage() {
   return (
     <main className="min-h-screen bg-page-bg">
       <Navbar />
-      <ServicesSection />
+      <ServicesPageContent />
+      <FooterSection />
     </main>
   );
 }
