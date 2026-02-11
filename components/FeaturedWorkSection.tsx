@@ -174,7 +174,7 @@ export default function FeaturedWorkSection() {
         >
           <path
             d="M 0 220 Q 600 40 1200 220"
-            stroke="rgba(255,255,255,0.16)"
+            stroke="var(--featured-arc-stroke)"
             strokeWidth="2"
             fill="none"
           />
