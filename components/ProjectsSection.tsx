@@ -152,7 +152,7 @@ export default function ProjectsSection() {
     const st = ScrollTrigger.create({
       trigger: el,
       start: "top top",
-      end: "+=100%",
+      end: "+=50%",
       pin: true,
       pinSpacing: true,
     });
