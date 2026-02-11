@@ -89,7 +89,6 @@ const SERVICES: Service[] = [
 ];
 
 export default function ServicesPageContent() {
-  const introRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const progressLineRef = useRef<HTMLDivElement>(null);
@@ -129,7 +128,7 @@ export default function ServicesPageContent() {
   useEffect(() => {
     const sections = sectionRefs.current.filter(Boolean) as HTMLElement[];
     const ctx = gsap.context(() => {
-      sections.forEach((section, i) => {
+      sections.forEach((section) => {
         const ordinal = section.querySelector("[data-ordinal]");
         const heading = section.querySelector("[data-heading]");
         const desc = section.querySelector("[data-desc]");
@@ -175,7 +174,6 @@ export default function ServicesPageContent() {
     <>
       {/* Intro: full viewport height so scroll triggers below fire at the right time */}
       <section
-        ref={introRef}
         className="relative min-h-screen h-screen flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-8 lg:px-14 pt-[max(2.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))] bg-section-bg overflow-hidden"
       >
         <div className="relative z-10 w-full max-w-[95vw]">

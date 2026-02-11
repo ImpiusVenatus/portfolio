@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { MapPin, Mail, Phone, ChevronDown } from "lucide-react";
@@ -17,15 +17,6 @@ const EXIT_DURATION = 0.3;
 const LOGO_SIZE = 96;
 const LOGO_SIZE_SM = 80;
 
-
-function shuffle<T>(arr: T[]): T[] {
-  const out = [...arr];
-  for (let i = out.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [out[i], out[j]] = [out[j], out[i]];
-  }
-  return out;
-}
 
 const TIMELINE_ITEMS: {
   side: "left" | "right";

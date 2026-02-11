@@ -248,11 +248,6 @@ export default function ProjectsSection() {
     setWheelIndex((x) => x + offset);
   };
 
-  // visible rows are always around wheelIndex
-  const visibleRowIndices = Array.from({ length: VISIBLE }).map(
-    (_, slot) => wheelIndex + (slot - CENTER)
-  );
-
   return (
     <section
       id="projects-carousel"
@@ -426,8 +421,6 @@ export default function ProjectsSection() {
               </p>
             </div>
 
-            {/* (optional) debug: remove if you don't want */}
-            {/* <div className="text-[10px] text-text-muted-2">{`wheelIndex=${wheelIndex} active=${active}`}</div> */}
           </div>
         </div>
       </div>
