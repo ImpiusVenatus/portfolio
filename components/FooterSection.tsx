@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { dmMono, raderFont } from "@/app/layout";
+import TransitionLink from "./TransitionLink";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -74,7 +75,6 @@ export default function FooterSection() {
   const emailRef = useRef<HTMLAnchorElement | null>(null);
   const instagramRef = useRef<HTMLAnchorElement | null>(null);
   const linkedinRef = useRef<HTMLAnchorElement | null>(null);
-  const backToTopRef = useRef<HTMLButtonElement | null>(null);
   const nameWrapRef = useRef<HTMLDivElement | null>(null);
   const letterRefs = useRef<(HTMLDivElement | null)[]>([]);
   const hasAnimatedRef = useRef(false);
@@ -94,11 +94,10 @@ export default function FooterSection() {
     const emailEl = emailRef.current;
     const instagramEl = instagramRef.current;
     const linkedinEl = linkedinRef.current;
-    const backToTop = backToTopRef.current;
     const nameWrap = nameWrapRef.current;
     if (!section || !ctaText || !ctaButton || !footer || !nameWrap) return;
 
-    gsap.set([ctaText, ctaButton, footer, backToTop], { autoAlpha: 0, y: 20, filter: "blur(10px)" });
+    gsap.set([ctaText, ctaButton, footer], { autoAlpha: 0, y: 20, filter: "blur(10px)" });
     if (emailEl) emailEl.textContent = "";
     if (instagramEl) instagramEl.textContent = "";
     if (linkedinEl) linkedinEl.textContent = "";
@@ -119,8 +118,6 @@ export default function FooterSection() {
       if (emailEl) tl.add(() => { scrambleTo(emailEl, EMAIL, SCRAMBLE_DUR); }, tScramble);
       if (instagramEl) tl.add(() => { scrambleTo(instagramEl, "INSTAGRAM", SCRAMBLE_DUR); }, tScramble + 0.12);
       if (linkedinEl) tl.add(() => { scrambleTo(linkedinEl, "LINKEDIN", SCRAMBLE_DUR); }, tScramble + 0.24);
-
-      tl.to(backToTop, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.4, ease: "power2.out" }, 0.5);
 
       const letters = letterRefs.current.filter(Boolean) as HTMLElement[];
       if (letters.length === 13) {
@@ -143,7 +140,7 @@ export default function FooterSection() {
     const runExit = () => {
       if (hasExitedRef.current) return;
       hasExitedRef.current = true;
-      gsap.to([ctaText, ctaButton, footer, backToTop], {
+      gsap.to([ctaText, ctaButton, footer], {
         autoAlpha: 0,
         y: -20,
         filter: "blur(10px)",
@@ -179,31 +176,27 @@ export default function FooterSection() {
     };
   }, [tiltedIndices]);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   return (
     <footer
       id="contact"
       ref={sectionRef}
-      className="relative z-20 w-full h-screen flex flex-col bg-section-bg pt-24 pb-12 px-10 md:px-14"
+      className="relative z-20 w-full min-h-screen h-screen flex flex-col bg-section-bg pt-24 pb-8 px-4 sm:pt-28 sm:pb-10 sm:px-6 md:pt-32 md:pb-12 md:px-10 lg:px-14"
     >
       <div className="max-w-7xl mx-auto w-full flex flex-col flex-1 min-h-0">
-        {/* Top: CTA + button left; email, socials, time, back to top right */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-10 lg:gap-12 items-start">
+        {/* Top: CTA + button left; email, socials, time right */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-6 sm:gap-8 lg:gap-12 items-start">
           <div>
             <p
               ref={ctaTextRef}
-              className="text-foreground/90 text-xl md:text-2xl lg:text-3xl leading-relaxed max-w-2xl"
+              className="text-foreground/90 text-base sm:text-lg md:text-2xl lg:text-3xl leading-relaxed max-w-2xl"
             >
               Let&apos;s build and ship something remarkable. Open to agency collaborations, freelance work, and fully remote full-time opportunities.
             </p>
-            <a
-              ref={ctaButtonRef}
-              href={`mailto:${EMAIL}`}
-              className={`group relative ml-4 mt-10 w-fit inline-flex items-center justify-center gap-2 text-text-muted hover:text-foreground transition-colors duration-200 ${dmMono.className} tracking-widest text-xs`}
-            >
+            <span ref={ctaButtonRef} className="inline-block ml-0 sm:ml-4 mt-6 sm:mt-10">
+              <TransitionLink
+                href="/contact"
+                className={`group relative w-fit inline-flex items-center justify-center gap-2 text-text-muted hover:text-foreground transition-colors duration-200 ${dmMono.className} tracking-widest text-[10px] sm:text-xs`}
+              >
               <span className="pointer-events-none absolute -left-4 top-1/2 -translate-y-1/2 opacity-0 -translate-x-1 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0">
                 <Image
                   src="/icons/hero-bracket.svg"
@@ -226,11 +219,12 @@ export default function FooterSection() {
                   className="opacity-90 rotate-180 invert dark:invert-0"
                 />
               </span>
-            </a>
+              </TransitionLink>
+            </span>
           </div>
           <div
             ref={footerRef}
-            className={`flex flex-col gap-4 ${dmMono.className} text-xs tracking-widest text-text-muted-2 lg:text-right`}
+            className={`flex flex-col gap-3 sm:gap-4 ${dmMono.className} text-[10px] sm:text-xs tracking-widest text-text-muted-2 lg:text-right`}
           >
             <a ref={emailRef} href={`mailto:${EMAIL}`} className="text-text-muted hover:text-foreground transition-colors uppercase">
               {EMAIL}
@@ -248,12 +242,12 @@ export default function FooterSection() {
         </div>
 
         {/* Name: 3 full-width horizontal lines + 2 vertical lines. Text in container, HOSSAIN right-aligned. */}
-        <div ref={nameWrapRef} className="relative mt-10 pt-4 overflow-visible flex-1 flex flex-col justify-center">
+        <div ref={nameWrapRef} className="relative mt-6 sm:mt-8 md:mt-10 pt-4 overflow-visible flex-1 flex flex-col justify-center">
           <div className="h-px bg-foreground/15 w-screen relative left-1/2 -translate-x-1/2" aria-hidden />
           <div className="relative w-full min-w-0 overflow-visible">
             <div
-              className={`flex flex-wrap items-center justify-start gap-1 md:gap-2 lg:gap-3 min-w-0 text-foreground/90 ${raderFont.className}`}
-              style={{ fontSize: "clamp(4rem, 14vw, 11rem)", letterSpacing: "0.0em" }}
+              className={`flex flex-wrap items-center justify-start gap-0.5 sm:gap-1 md:gap-2 lg:gap-3 min-w-0 text-foreground/90 ${raderFont.className}`}
+              style={{ fontSize: "clamp(2.5rem, 10vw, 11rem)", letterSpacing: "0.0em" }}
             >
               {NAME_LETTERS.slice(0, 6).map((char, i) => (
                 <div key={`s-${i}`} ref={(el) => { letterRefs.current[i] = el; }} className="inline-block opacity-0" data-letter={char}>{char}</div>
@@ -261,8 +255,8 @@ export default function FooterSection() {
             </div>
             <div className="h-px bg-foreground/15 w-screen relative left-1/2 -translate-x-1/2" aria-hidden />
             <div
-              className={`flex flex-wrap items-center justify-end gap-1 md:gap-2 lg:gap-3 min-w-0 text-foreground/90 ${raderFont.className}`}
-              style={{ fontSize: "clamp(4rem, 14vw, 11rem)", letterSpacing: "0.0em" }}
+              className={`flex flex-wrap items-center justify-end gap-0.5 sm:gap-1 md:gap-2 lg:gap-3 min-w-0 text-foreground/90 ${raderFont.className}`}
+              style={{ fontSize: "clamp(2.5rem, 10vw, 11rem)", letterSpacing: "0.0em" }}
             >
               {NAME_LETTERS.slice(6, 13).map((char, i) => (
                 <div key={`h-${i}`} ref={(el) => { letterRefs.current[6 + i] = el; }} className="inline-block opacity-0" data-letter={char}>{char}</div>
@@ -274,21 +268,6 @@ export default function FooterSection() {
           <div className="h-px bg-foreground/15 w-screen relative left-1/2 -translate-x-1/2" aria-hidden />
         </div>
 
-        {/* Back to top: bottom right, arrow button with growing/fading pulse bg */}
-        <div className="absolute right-18 bottom-18 mt-auto pt-6 flex justify-end">
-          <button
-            ref={backToTopRef}
-            type="button"
-            onClick={scrollToTop}
-            className="relative cursor-pointer flex items-center justify-center w-12 h-12 rounded-full bg-foreground/10 border border-foreground/30 text-text-muted hover:text-foreground hover:border-foreground/50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-foreground/40 overflow-visible"
-            aria-label="Back to top"
-          >
-            <span className="absolute inset-0 rounded-full bg-foreground/20 pointer-events-none animate-back-to-top-pulse" aria-hidden />
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="relative z-10 shrink-0">
-              <path d="M18 15l-6-6-6 6" />
-            </svg>
-          </button>
-        </div>
       </div>
     </footer>
   );
