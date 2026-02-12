@@ -419,20 +419,20 @@ export default function ServicesSection() {
   const s = services[active];
 
   return (
-    <div ref={wrapperRef} className="relative z-30 h-screen w-screen box-border bg-section-bg py-10 px-8">
+    <div ref={wrapperRef} className="relative z-30 min-h-screen lg:h-screen w-screen box-border bg-section-bg py-6 px-4 sm:py-8 sm:px-6 lg:py-10 lg:px-8">
       <section
         id="services"
-        className="relative h-full w-full bg-section-bg rounded-[28px] overflow-hidden border border-border-subtle"
+        className="relative h-full max-h-[calc(100dvh-3rem)] sm:max-h-none lg:min-h-0 w-full bg-section-bg rounded-2xl sm:rounded-[28px] overflow-x-hidden overflow-y-hidden sm:overflow-y-auto border border-border-subtle"
       >
       {/* Background vibe */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-foreground/5" />
-        <div className="absolute -left-40 -top-40 h-[520px] w-[520px] rounded-full bg-foreground/10 blur-3xl" />
-        <div className="absolute -right-40 -bottom-40 h-[520px] w-[520px] rounded-full bg-foreground/10 blur-3xl" />
+        <div className="absolute -left-40 -top-40 h-[320px] w-[320px] sm:h-[420px] sm:w-[420px] lg:h-[520px] lg:w-[520px] rounded-full bg-foreground/10 blur-3xl" />
+        <div className="absolute -right-40 -bottom-40 h-[320px] w-[320px] sm:h-[420px] sm:w-[420px] lg:h-[520px] lg:w-[520px] rounded-full bg-foreground/10 blur-3xl" />
       </div>
 
-      {/* Top-left progress ring */}
-      <div ref={progressWrapRef} className="absolute left-14 top-14 z-20">
+      {/* Progress ring — right on mobile, left on desktop */}
+      <div ref={progressWrapRef} className="absolute right-4 top-6 left-auto sm:left-6 sm:right-auto sm:top-6 lg:left-14 lg:top-14 z-20 scale-75 origin-top-right sm:scale-90 sm:origin-top-left lg:scale-100 lg:origin-top-left">
         <ProgressRing
           value={active + 1}
           total={services.length}
@@ -440,28 +440,28 @@ export default function ServicesSection() {
         />
       </div>
 
-      {/* Top-right labels (more space from top) */}
-      <div ref={pillRef} className="absolute right-14 top-24 z-20 text-right">
-        <div className={`text-[11px] tracking-[0.28em] text-text-muted ${dmMono.className}`}>{s.pillTop}</div>
-        <div className={`mt-3 text-[11px] tracking-[0.22em] text-text-muted ${dmMono.className}`}>{s.pillMid}</div>
-        <div className={`mt-2 text-[11px] tracking-[0.22em] text-text-muted ${dmMono.className}`}>{s.pillBot}</div>
-        <div className="mt-6 h-px w-[520px] bg-foreground/10" />
+      {/* Pill labels — hidden on mobile; top-right on sm+; tech list (pillMid, pillBot) hidden on mobile */}
+      <div ref={pillRef} className="absolute hidden sm:block left-auto right-6 sm:top-20 lg:right-14 lg:top-24 z-20 text-right">
+        <div className={`text-[10px] sm:text-[11px] tracking-[0.28em] text-text-muted ${dmMono.className}`}>{s.pillTop}</div>
+        <div className={`mt-2 sm:mt-3 text-[10px] sm:text-[11px] tracking-[0.22em] text-text-muted ${dmMono.className}`}>{s.pillMid}</div>
+        <div className={`mt-1 sm:mt-2 text-[10px] sm:text-[11px] tracking-[0.22em] text-text-muted ${dmMono.className}`}>{s.pillBot}</div>
+        <div className="mt-4 sm:mt-6 h-px w-full max-w-[200px] sm:max-w-[360px] lg:max-w-[520px] bg-foreground/10 ml-auto" />
       </div>
 
-      {/* Center content */}
-      <div className="relative z-10 px-14 py-16 h-full min-h-0 flex items-center">
-        <div className="w-full relative">
+      {/* Center content — flex col on mobile, row on lg; pb reduced to prevent empty scroll space */}
+      <div className="relative z-10 px-4 pt-28 pb-20 sm:pt-32 sm:pb-36 sm:px-6 lg:px-14 lg:pt-16 lg:pb-16 h-full min-h-0 flex flex-col lg:flex-row lg:items-center">
+        <div className="w-full flex flex-col lg:relative">
           {/* Left content */}
-          <div ref={contentRef} className="max-w-[720px]">
-            <h2 className={`${spaceGrotesk.className} text-heading font-bold text-[96px] leading-[0.95]`}>
+          <div ref={contentRef} className="max-w-[720px] order-1">
+            <h2 className={`${spaceGrotesk.className} text-heading font-bold text-3xl sm:text-4xl md:text-5xl lg:text-[96px] leading-[0.95]`}>
               {s.title}
             </h2>
 
-            <p className="mt-8 max-w-[560px] text-text-muted-2 leading-relaxed">{s.short}</p>
+            <p className="hidden sm:block mt-4 sm:mt-6 lg:mt-8 max-w-[560px] text-text-muted-2 text-sm sm:text-base leading-relaxed">{s.short}</p>
 
             <a
               href={s.ctaHref}
-              className={`group relative mt-10 inline-flex items-center justify-center gap-2 text-text-muted hover:text-foreground transition-colors duration-200 ${dmMono.className} tracking-widest text-xs`}
+              className={`group relative mt-6 sm:mt-8 lg:mt-10 inline-flex items-center justify-center gap-2 text-text-muted hover:text-foreground transition-colors duration-200 ${dmMono.className} tracking-widest text-xs`}
             >
               <span className="pointer-events-none absolute -left-4 top-1/2 -translate-y-1/2 opacity-0 -translate-x-1 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0">
                 <Image
@@ -488,30 +488,30 @@ export default function ServicesSection() {
             </a>
           </div>
 
-          {/* Right: SERVICE block (timeline-style) — positioned below top-right line */}
-          <div className="absolute right-14 top-0">
+          {/* Right: SERVICE block — in flow on mobile (below content), absolute on lg */}
+          <div className="relative lg:absolute lg:right-14 lg:top-0 order-2 mt-8 sm:mt-10 lg:mt-0 lg:order-none">
             <div
               ref={cardRef}
-              className="relative w-[420px] min-h-[280px] pl-8"
+              className="relative w-full min-w-0 lg:w-[420px] lg:min-w-[420px] min-h-[200px] lg:min-h-[280px] pl-6 sm:pl-8"
             >
               {/* Vertical accent line */}
               <div ref={serviceLineRef} className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-heading/40 via-foreground/20 to-transparent origin-top" />
-              <div className={`text-[11px] tracking-[0.28em] text-text-muted-2 ${dmMono.className}`}>SERVICE</div>
+              <div className={`text-[10px] sm:text-[11px] tracking-[0.28em] text-text-muted-2 ${dmMono.className}`}>SERVICE</div>
 
-              <div className="mt-5 space-y-0">
+              <div className="mt-4 lg:mt-5 space-y-0">
                 {s.cards.map((c) => (
                   <div
                     key={c.label}
                     data-service-row
-                    className="relative flex gap-4 py-4 border-b border-border-subtle last:border-0 last:pb-0 first:pt-0"
+                    className="relative flex gap-3 sm:gap-4 py-3 sm:py-4 border-b border-border-subtle last:border-0 last:pb-0 first:pt-0"
                   >
-                    <span className="absolute -left-8 top-1/2 -translate-y-1/2 w-0 flex justify-center" aria-hidden>
-                    <span className="absolute left-0 top-0 h-1.5 w-1.5 rounded-full bg-heading/70 -translate-x-1/2" />
-                  </span>
-                    <div>
-                      <div className="text-foreground/90 font-semibold text-base tracking-tight">{c.label}</div>
-                      <div className="mt-0.5 text-text-muted-2 text-sm">{c.meta}</div>
-                      <div className={`mt-1.5 text-text-muted-2 text-[11px] tracking-widest ${dmMono.className}`}>
+                    <span className="absolute -left-6 sm:-left-8 top-1/2 -translate-y-1/2 w-0 flex justify-center" aria-hidden>
+                      <span className="absolute left-0 top-0 h-1.5 w-1.5 rounded-full bg-heading/70 -translate-x-1/2" />
+                    </span>
+                    <div className="min-w-0">
+                      <div className="text-foreground/90 font-semibold text-sm sm:text-base tracking-tight">{c.label}</div>
+                      <div className="mt-0.5 text-text-muted-2 text-xs sm:text-sm">{c.meta}</div>
+                      <div className={`mt-1 sm:mt-1.5 text-text-muted-2 text-[10px] sm:text-[11px] tracking-widest ${dmMono.className}`}>
                         {c.stack}
                       </div>
                     </div>
@@ -523,11 +523,11 @@ export default function ServicesSection() {
         </div>
       </div>
 
-      {/* Bottom-left arrows (section anchored) */}
-      <div ref={arrowsRef} className="absolute left-14 bottom-14 z-20 flex items-center gap-3">
+      {/* Bottom-left arrows — responsive spacing; extra space below buttons on mobile */}
+      <div ref={arrowsRef} className="absolute left-4 bottom-10 sm:left-6 sm:bottom-6 lg:left-14 lg:bottom-14 z-20 flex items-center gap-2 sm:gap-3">
         <button
           onClick={goPrev}
-          className="h-10 w-10 rounded-full border border-border-subtle bg-foreground/5 backdrop-blur text-text-muted hover:text-foreground transition flex items-center justify-center"
+          className="h-9 w-9 sm:h-10 sm:w-10 rounded-full border border-border-subtle bg-foreground/5 backdrop-blur text-text-muted hover:text-foreground transition flex items-center justify-center"
           aria-label="Previous"
         >
           ←
@@ -535,15 +535,15 @@ export default function ServicesSection() {
 
         <button
           onClick={goNext}
-          className="h-10 w-10 rounded-full border border-border-subtle bg-foreground/5 backdrop-blur text-text-muted hover:text-foreground transition flex items-center justify-center"
+          className="h-9 w-9 sm:h-10 sm:w-10 rounded-full border border-border-subtle bg-foreground/5 backdrop-blur text-text-muted hover:text-foreground transition flex items-center justify-center"
           aria-label="Next"
         >
           →
         </button>
       </div>
 
-      {/* Bottom-right pause/play button (section anchored) */}
-      <div ref={pauseRef} className="absolute right-14 bottom-14 z-20 flex items-center gap-3">
+      {/* Bottom-right pause/play button — responsive spacing; extra space below buttons on mobile */}
+      <div ref={pauseRef} className="absolute right-4 bottom-10 sm:right-6 sm:bottom-6 lg:right-14 lg:bottom-14 z-20 flex items-center gap-2 sm:gap-3">
         <button
           onClick={() => setPaused((v) => !v)}
           className="h-10 w-10 rounded-full border border-border-subtle bg-foreground/5 backdrop-blur text-text-muted hover:text-foreground transition flex items-center justify-center"
