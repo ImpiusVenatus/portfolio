@@ -269,7 +269,6 @@ export default function AboutPageContent() {
               >
                 Engineer
               </span>
-              <span className="text-foreground/40" style={{ fontSize: "clamp(4rem, 12vw, 8rem)" }}>·</span>
               <span
                 ref={(el) => { aboutWordRefs.current[1] = el; }}
                 className={`inline-block opacity-0 text-foreground/90 ${raderFont.className}`}
