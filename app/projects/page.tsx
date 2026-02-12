@@ -4,7 +4,7 @@ import ProjectsSection from "@/components/ProjectsSection";
 
 export default function ProjectsPage() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-page-bg">
       <Navbar />
       {/* Intro section */}
       <section className="relative h-screen w-screen flex flex-col items-center justify-center text-center bg-section-bg text-foreground">

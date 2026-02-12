@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
 const HERO_BG = "#101318";
+const LIGHT_BG = "#F4F1D8"; // Off-white theme
 const COVER_SIZE = "180vmax"; // large enough to cover viewport when expanding from corner
 // Sharp bottom-right (anchor corner); other corners rounded so no gap at viewport corner
 const BORDER_RADIUS = "80px 80px 0 80px"; // top-left, top-right, bottom-right, bottom-left
@@ -90,7 +91,7 @@ export default function PageTransition({ onComplete }: { onComplete: () => void 
           width: 0,
           height: 0,
           borderRadius: BORDER_RADIUS,
-          backgroundColor: "#ffffff",
+          backgroundColor: LIGHT_BG,
         }}
       />
       <div

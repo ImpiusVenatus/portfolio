@@ -102,7 +102,7 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
   return (
     <div
       ref={wrapRef}
-      className="fixed inset-0 z-[10000] flex flex-col items-center justify-center gap-4 bg-white"
+      className="fixed inset-0 z-[10000] flex flex-col items-center justify-center gap-4 bg-[#F4F1D8]"
       aria-hidden
     >
       {/* Percentage text above progress bar */}
