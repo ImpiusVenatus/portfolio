@@ -74,17 +74,17 @@ export default function TextSection() {
     <section
       id="about"
       ref={sectionRef}
-      className="relative z-20 min-h-screen w-full bg-section-bg flex items-center justify-center py-24 px-8"
+      className="relative z-20 min-h-screen h-screen max-h-[100dvh] w-full bg-section-bg flex items-center justify-center py-10 px-4 sm:py-16 sm:px-6 md:py-20 lg:py-24 lg:px-8"
     >
-      <div className="max-w-5xl mx-auto text-left">
-        <p className={`text-[32px] text-foreground leading-relaxed ${manrope.className}`}>
+      <div className="max-w-5xl mx-auto text-left w-full">
+        <p className={`text-foreground ${manrope.className} text-base sm:text-lg md:text-xl lg:text-2xl xl:text-[32px] leading-snug sm:leading-relaxed`}>
           <span ref={line1Ref} className="block">
             I blend design, product strategy, and engineering to build seamless digital experiences.
           </span>
-          <span ref={line2Ref} className="block mt-4">
+          <span ref={line2Ref} className="block mt-3 sm:mt-4">
             Over the past few years, I&apos;ve developed full-stack fintech and AI-driven platforms — from remittance and migrant services to intelligent credit scoring systems.
           </span>
-          <span ref={line3Ref} className="block mt-4">
+          <span ref={line3Ref} className="block mt-3 sm:mt-4">
             Today, I bring that builder mindset to startups and ambitious teams, turning complex ideas into polished, scalable products.
           </span>
         </p>
