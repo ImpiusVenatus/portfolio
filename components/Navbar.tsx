@@ -284,13 +284,13 @@ export default function Navbar() {
           aria-label="Open menu"
           onClick={() => setOpen((v) => !v)}
           className={cn(
-            "fixed top-10 left-14 z-[9999]",
+            "fixed top-6 left-6 z-[9999]",
             "h-12 w-12 inline-flex items-center justify-center transition cursor-pointer",
             open
               ? "text-white dark:text-[#101318]"
               : contrast === "dark"
                 ? "text-[#1a1a1a]"
-                : "text-white"
+                : "text-[#F4F1D8]"
           )}
         >
           <HamburgerIcon />
@@ -308,8 +308,8 @@ export default function Navbar() {
           onOpenChange={setOpen}
           hideTrigger
           items={overlayMenuItems}
-          buttonLeft="3.5rem"
-          buttonTop="2.5rem"
+          buttonLeft="1.5rem"
+          buttonTop="1.5rem"
           overlayBackground="var(--mobile-menu-bg)"
           textColor="var(--mobile-menu-text)"
           fontSize="lg"
