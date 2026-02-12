@@ -1,0 +1,11 @@
+<svg class="svgScroll" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" xmlns:bx="https://boxy-svg.com" style="translate: none; rotate: none; scale: none; transform: translate3d(0px, 0px, 0px) rotate(47.52deg);">
+  <defs>
+    <path id="text-path-0" d="M 94.578125 150.609375 Q 225.2734375 119.3125 355.96875 150.609375"></path>
+    <style bx:fonts="Spectral">@import url(https://fonts.googleapis.com/css2?family=Spectral%3Aital%2Cwght%400%2C200%3B0%2C300%3B0%2C400%3B0%2C500%3B0%2C600%3B0%2C700%3B0%2C800%3B1%2C200%3B1%2C300%3B1%2C400%3B1%2C500%3B1%2C600%3B1%2C700%3B1%2C800&amp;display=swap);</style>
+  </defs>
+  <ellipse style="fill: none;" cx="250" cy="250" rx="250" ry="250"></ellipse>
+  <path d="M 427.099 250 C 427.099 347.809 347.809 427.099 250 427.099 C 152.191 427.099 72.901 347.809 72.901 250 C 72.901 152.191 152.191 72.901 250 72.901 C 347.809 72.901 427.099 152.191 427.099 250 Z" style="fill: none; transform-box: fill-box; transform-origin: 50% 50%;" id="path-0"></path>
+  <text style="fill: rgb(51, 51, 51); font-family: Spectral; font-size: 47.5px; white-space: pre;"><textPath href="#path-0">| SCROLL TO ENTER |</textPath></text>
+  <path d="M 427.099 250 C 427.099 347.809 347.809 427.099 250 427.099 C 152.191 427.099 72.901 347.809 72.901 250 C 72.901 152.191 152.191 72.901 250 72.901 C 347.809 72.901 427.099 152.191 427.099 250 Z" style="fill: none; transform-box: fill-box; transform-origin: 50% 50%;" id="path-2" transform="matrix(-1, 0, 0, -1, 0, 0)"></path>
+  <text style="fill: rgb(51, 51, 51); font-family: Spectral; font-size: 45px; white-space: pre;"><textPath href="#path-2">| SCROLL TO ENTER |</textPath></text>
+</svg>
