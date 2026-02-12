@@ -2,6 +2,8 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { ToggleTheme } from "@/components/lightswind/toggle-theme";
+import { useNavbarContrast } from "./NavbarContrastProvider";
+import { cn } from "@/lib/utils";
 
 const LOCK_ZONE_LEFT = 120;
 const LOCK_ZONE_BOTTOM = 120;
@@ -11,6 +13,7 @@ const VELOCITY_MULT = 0.38; // throw speed (reduced)
 const DRAG_THRESHOLD = 8;
 
 export default function DraggableThemeToggle() {
+  const contrast = useNavbarContrast();
   const [locked, setLocked] = useState(true);
   const [pos, setPos] = useState({ x: 24, y: 400 });
   const velRef = useRef({ vx: 0, vy: 0 });
@@ -179,7 +182,12 @@ export default function DraggableThemeToggle() {
       }}
     >
       <ToggleTheme
-        className="rounded-full bg-foreground/15 text-foreground hover:bg-foreground/25 backdrop-blur-sm p-2.5 border border-border-subtle cursor-grab active:cursor-grabbing touch-none select-none"
+        className={cn(
+          "rounded-full backdrop-blur-sm p-2.5 cursor-grab active:cursor-grabbing touch-none select-none transition-colors",
+          contrast === "dark"
+            ? "bg-[#1a1a1a]/15 text-[#1a1a1a] hover:bg-[#1a1a1a]/25 border border-[#1a1a1a]/20"
+            : "bg-white/15 text-white hover:bg-white/25 border border-white/20"
+        )}
         aria-label="Toggle light/dark mode"
       />
     </div>

@@ -8,6 +8,7 @@ import { dmMono } from "@/app/layout";
 import { usePageTransition } from "./PageTransitionProvider";
 import TransitionLink from "./TransitionLink";
 import { HamburgerMenuOverlay, type MenuItem } from "./lightswind/hamburger-menu-overlay";
+import { useNavbarContrast } from "./NavbarContrastProvider";
 import { cn } from "@/lib/utils";
 
 const MD_BREAKPOINT = 768;
@@ -21,7 +22,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "CONTACT", href: "/contact" },
 ];
 
-function NavLink({ label, href, onInternalNavigate }: NavItem & { onInternalNavigate?: () => void }) {
+function NavLink({ label, href, onInternalNavigate, contrast }: NavItem & { onInternalNavigate?: () => void; contrast: "dark" | "light" }) {
   const isInternal = href.startsWith("/") && !href.startsWith("//");
   const handleClick = (e: React.MouseEvent) => {
     if (isInternal && onInternalNavigate) {
@@ -37,11 +38,18 @@ function NavLink({ label, href, onInternalNavigate }: NavItem & { onInternalNavi
           alt=""
           width={6}
           height={6}
-          className="opacity-90 invert dark:invert-0"
+          className={cn("opacity-90", contrast === "dark" ? "invert" : "")}
         />
       </span>
 
-      <span className="text-text-muted transition-colors duration-200 group-hover:text-foreground">
+      <span
+        className={cn(
+          "transition-colors duration-200",
+          contrast === "dark"
+            ? "text-[#1a1a1a]/70 group-hover:text-[#1a1a1a]"
+            : "text-white/70 group-hover:text-white"
+        )}
+      >
         {label}
       </span>
 
@@ -51,7 +59,7 @@ function NavLink({ label, href, onInternalNavigate }: NavItem & { onInternalNavi
           alt=""
           width={6}
           height={6}
-          className="opacity-90 rotate-180 invert dark:invert-0"
+          className={cn("opacity-90 rotate-180", contrast === "dark" ? "invert" : "")}
         />
       </span>
     </a>
@@ -70,6 +78,7 @@ function HamburgerIcon({ className }: { className?: string }) {
 
 export default function Navbar() {
   const pageTransition = usePageTransition();
+  const contrast = useNavbarContrast();
   const menuBtnRef = useRef<HTMLButtonElement | null>(null);
 
   const [open, setOpen] = useState(false);
@@ -220,7 +229,12 @@ export default function Navbar() {
           >
             <TransitionLink
               href="/"
-              className={`flex items-center gap-2 tracking-widest text-sm opacity-90 flex-shrink-0 ${dmMono.className} text-foreground/90 hover:text-foreground transition-colors`}
+              className={cn(
+                `flex items-center gap-2 tracking-widest text-sm flex-shrink-0 ${dmMono.className} transition-colors`,
+                contrast === "dark"
+                  ? "text-[#1a1a1a]/90 hover:text-[#1a1a1a]"
+                  : "text-white/90 hover:text-white"
+              )}
             >
               <span>||</span>
               <span className="text-lg">Md Sadman Hossain</span>
@@ -228,11 +242,12 @@ export default function Navbar() {
             </TransitionLink>
 
             <div className="ml-auto flex items-center gap-10">
-              <nav className={`flex gap-10 text-xs tracking-widest opacity-90 ${dmMono.className}`}>
+              <nav className={`flex gap-10 text-xs tracking-widest ${dmMono.className}`}>
                 {menuItems.map((item) => (
                   <NavLink
                     key={item.href}
                     {...item}
+                    contrast={contrast}
                     onInternalNavigate={item.href.startsWith("/") ? () => pageTransition?.navigateWithTransition(item.href) : undefined}
                   />
                 ))}
@@ -245,7 +260,12 @@ export default function Navbar() {
             type="button"
             aria-label={collapsed ? "Expand navbar" : "Collapse navbar"}
             onClick={collapsed ? () => setCollapsed(false) : handleCollapse}
-            className="h-12 w-12 flex-shrink-0 ml-4 inline-flex items-center justify-center text-foreground/80 hover:text-foreground transition-colors cursor-pointer"
+            className={cn(
+              "h-12 w-12 flex-shrink-0 ml-4 inline-flex items-center justify-center transition-colors cursor-pointer",
+              contrast === "dark"
+                ? "text-[#1a1a1a]/80 hover:text-[#1a1a1a]"
+                : "text-white/80 hover:text-white"
+            )}
           >
             {collapsed ? (
               <PanelLeftOpen className="w-5 h-5" strokeWidth={1.5} />
@@ -266,7 +286,11 @@ export default function Navbar() {
           className={cn(
             "fixed top-10 left-14 z-[9999]",
             "h-12 w-12 inline-flex items-center justify-center transition cursor-pointer",
-            open ? "text-white dark:text-[#101318]" : "text-[#101318] dark:text-white"
+            open
+              ? "text-white dark:text-[#101318]"
+              : contrast === "dark"
+                ? "text-[#1a1a1a]"
+                : "text-white"
           )}
         >
           <HamburgerIcon />

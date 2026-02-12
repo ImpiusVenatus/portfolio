@@ -2,6 +2,7 @@ import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import PreloaderGate from "@/components/PreloaderGate";
 import PageTransitionProvider from "@/components/PageTransitionProvider";
 import DraggableThemeToggle from "@/components/DraggableThemeToggle";
+import { NavbarContrastProvider } from "@/components/NavbarContrastProvider";
 import "./globals.css";
 import { DM_Mono, Manrope, Space_Grotesk } from "next/font/google";
 import localFont from "next/font/local";
@@ -53,15 +54,17 @@ export default function RootLayout({
             __html: `(function(){try{if(sessionStorage.getItem('preloaderDone'))window.__PRELOADER_SKIP__=1;}catch(e){}})();`,
           }}
         />
-        <PreloaderGate>
-          <SmoothScrollProvider>
-            <PageTransitionProvider>
-              {children}
-            </PageTransitionProvider>
-          </SmoothScrollProvider>
-        </PreloaderGate>
-        {/* Theme toggle: draggable/throwable; locks when in bottom-left corner */}
-        <DraggableThemeToggle />
+        <NavbarContrastProvider>
+          <PreloaderGate>
+            <SmoothScrollProvider>
+              <PageTransitionProvider>
+                {children}
+              </PageTransitionProvider>
+            </SmoothScrollProvider>
+          </PreloaderGate>
+          {/* Theme toggle: draggable/throwable; locks when in bottom-left corner */}
+          <DraggableThemeToggle />
+        </NavbarContrastProvider>
       </body>
     </html>
   );
