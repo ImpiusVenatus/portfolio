@@ -33,6 +33,11 @@ const TEXT_BLOCK_WIDTH = 260;
 const TEXT_BLOCK_HEIGHT = 72;
 const ICON_BLOCK_RADIUS = 36;
 
+// Mobile (< 640px) scale
+const TEXT_BLOCK_WIDTH_SM = 160;
+const TEXT_BLOCK_HEIGHT_SM = 48;
+const ICON_BLOCK_RADIUS_SM = 22;
+
 const TEXT_CORE: TextBlock[] = [
   { type: "text", label: "Web apps", color: "bg-amber-200/95 text-amber-900" },
   { type: "text", label: "No code", color: "bg-sky-200/95 text-sky-900" },
@@ -282,13 +287,22 @@ export default function CapabilitiesSection() {
   ) {
     const blocks = TAB_BLOCKS[tab];
     const cw = containerRef.current?.getBoundingClientRect().width ?? 800;
+    const isMobile = cw < 640;
+    const textW = isMobile ? TEXT_BLOCK_WIDTH_SM : TEXT_BLOCK_WIDTH;
+    const textH = isMobile ? TEXT_BLOCK_HEIGHT_SM : TEXT_BLOCK_HEIGHT;
+    const iconR = isMobile ? ICON_BLOCK_RADIUS_SM : ICON_BLOCK_RADIUS;
+
     const bodies: import("matter-js").Body[] = [];
     const divs: HTMLDivElement[] = [];
     const dimensions: { w: number; h: number }[] = [];
 
+    const xStep = isMobile ? 80 : 120;
+    const xOffset = isMobile ? 60 : 100;
+    const spreadWidth = Math.max(1, cw - (isMobile ? 120 : 200));
+
     blocks.forEach((block, i) => {
-      const x = 100 + (i * 120) % Math.max(1, cw - 200);
-      const y = -80 - i * 55;
+      const x = xOffset + (i * xStep) % spreadWidth;
+      const y = isMobile ? -60 - i * 40 : -80 - i * 55;
 
       const isText = block.type === "text";
       let body: import("matter-js").Body;
@@ -296,8 +310,8 @@ export default function CapabilitiesSection() {
       let h: number;
 
       if (isText) {
-        w = TEXT_BLOCK_WIDTH;
-        h = TEXT_BLOCK_HEIGHT;
+        w = textW;
+        h = textH;
         body = Matter.Bodies.rectangle(x, y, w, h, {
           restitution: 0.3,
           friction: 0.4,
@@ -305,9 +319,9 @@ export default function CapabilitiesSection() {
           angle: (Math.random() - 0.5) * 0.8,
         });
       } else {
-        w = ICON_BLOCK_RADIUS * 2;
-        h = ICON_BLOCK_RADIUS * 2;
-        body = Matter.Bodies.circle(x, y, ICON_BLOCK_RADIUS, {
+        w = iconR * 2;
+        h = iconR * 2;
+        body = Matter.Bodies.circle(x, y, iconR, {
           restitution: 0.3,
           friction: 0.4,
           frictionAir: 0.01,
@@ -329,7 +343,7 @@ export default function CapabilitiesSection() {
       div.setAttribute("data-body-id", String(body.id));
 
       if (isText) {
-        div.classList.add("rounded-[28px]", "text-2xl");
+        div.classList.add("rounded-[28px]", isMobile ? "text-sm" : "text-2xl");
         const textSpan = document.createElement("span");
         textSpan.textContent = block.label;
         textSpan.className = "text-center leading-tight";
@@ -340,11 +354,11 @@ export default function CapabilitiesSection() {
           const img = document.createElement("img");
           img.src = block.logoUrl;
           img.alt = "";
-          img.className = "w-8 h-8 object-contain";
+          img.className = isMobile ? "w-5 h-5 object-contain" : "w-8 h-8 object-contain";
           div.appendChild(img);
         } else {
           const iconWrap = document.createElement("span");
-          iconWrap.className = "flex items-center justify-center [&_svg]:w-7 [&_svg]:h-7";
+          iconWrap.className = isMobile ? "flex items-center justify-center [&_svg]:w-4 [&_svg]:h-4" : "flex items-center justify-center [&_svg]:w-7 [&_svg]:h-7";
           iconWrap.innerHTML = getIconSvg(block.icon);
           div.appendChild(iconWrap);
         }
@@ -365,29 +379,31 @@ export default function CapabilitiesSection() {
       ref={sectionRef}
       className="relative z-20 min-h-screen w-full bg-section-bg flex flex-col overflow-hidden"
     >
-      <div className="relative z-10 flex items-center justify-center gap-8 pt-16 pb-6">
+      <div className="relative z-10 flex flex-wrap items-center justify-center gap-2 sm:gap-4 md:gap-8 pt-10 pb-4 sm:pt-16 sm:pb-6 px-4">
         <button
           type="button"
           onClick={() => setActiveTab("core")}
-          className={`cursor-pointer ${dmMono.className} text-sm tracking-widest text-foreground/90 hover:text-foreground transition ${
+          className={`cursor-pointer ${dmMono.className} text-[10px] sm:text-xs md:text-sm tracking-widest text-foreground/90 hover:text-foreground transition ${
             activeTab === "core" ? "opacity-100" : "opacity-60"
           }`}
         >
-          {activeTab === "core" ? "( CORE CAPABILITIES )" : "CORE CAPABILITIES"}
+          <span className="md:hidden">{activeTab === "core" ? "( CORE )" : "CORE"}</span>
+          <span className="hidden md:inline">{activeTab === "core" ? "( CORE CAPABILITIES )" : "CORE CAPABILITIES"}</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("tech")}
-          className={`cursor-pointer ${dmMono.className} text-sm tracking-widest text-foreground/90 hover:text-foreground transition ${
+          className={`cursor-pointer ${dmMono.className} text-[10px] sm:text-xs md:text-sm tracking-widest text-foreground/90 hover:text-foreground transition ${
             activeTab === "tech" ? "opacity-100" : "opacity-60"
           }`}
         >
-          {activeTab === "tech" ? "( TECH STACKS )" : "TECH STACKS"}
+          <span className="md:hidden">{activeTab === "tech" ? "( TECH )" : "TECH"}</span>
+          <span className="hidden md:inline">{activeTab === "tech" ? "( TECH STACKS )" : "TECH STACKS"}</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("projects")}
-          className={`cursor-pointer ${dmMono.className} text-sm tracking-widest text-foreground/90 hover:text-foreground transition ${
+          className={`cursor-pointer ${dmMono.className} text-[10px] sm:text-xs md:text-sm tracking-widest text-foreground/90 hover:text-foreground transition ${
             activeTab === "projects" ? "opacity-100" : "opacity-60"
           }`}
         >
@@ -397,7 +413,7 @@ export default function CapabilitiesSection() {
 
       <div
         ref={containerRef}
-        className="relative z-10 flex-1 min-h-[60vh] mx-6 mb-8 rounded-2xl border border-border-subtle bg-section-bg overflow-hidden cursor-grab active:cursor-grabbing"
+        className="relative z-10 flex-1 min-h-[50vh] sm:min-h-[60vh] mx-3 sm:mx-6 mb-6 sm:mb-8 rounded-xl sm:rounded-2xl border border-border-subtle bg-section-bg overflow-hidden cursor-grab active:cursor-grabbing"
       >
         <div
           ref={blocksWrapRef}
