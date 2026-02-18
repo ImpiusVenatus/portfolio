@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import ContactForm from "@/components/ContactForm";
+import ContactForm from "@/components/pages/contact/ContactForm";
 import TransitionLink from "@/components/TransitionLink";
 import { dmMono } from "@/app/layout";
 
@@ -82,3 +82,4 @@ export default function ContactPageContent() {
     </div>
   );
 }
+

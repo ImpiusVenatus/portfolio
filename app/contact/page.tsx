@@ -1,5 +1,5 @@
 import Navbar from "@/components/Navbar";
-import ContactPageContent from "@/components/ContactPageContent";
+import ContactPageContent from "@/components/pages/contact/ContactPageContent";
 
 export default function ContactPage() {
   return (

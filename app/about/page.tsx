@@ -1,5 +1,5 @@
 import Navbar from "@/components/Navbar";
-import AboutPageContent from "@/components/AboutPageContent";
+import AboutPageContent from "@/components/pages/about/AboutPageContent";
 import FooterSection from "@/components/FooterSection";
 
 export default function AboutPage() {

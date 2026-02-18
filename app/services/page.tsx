@@ -1,6 +1,6 @@
 import FooterSection from "@/components/FooterSection";
 import Navbar from "@/components/Navbar";
-import ServicesPageContent from "@/components/ServicesPageContent";
+import ServicesPageContent from "@/components/pages/services/ServicesPageContent";
 
 export default function ServicesPage() {
   return (
