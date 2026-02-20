@@ -234,6 +234,23 @@ export default function ProjectsSection() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Preload all mockup images on mount so swiping doesn't trigger fresh fetches
+  useEffect(() => {
+    PROJECTS.forEach((p) => {
+      const link = document.createElement("link");
+      link.rel = "preload";
+      link.as = "image";
+      link.href = p.mockupSrc;
+      document.head.appendChild(link);
+    });
+    return () => {
+      PROJECTS.forEach((p) => {
+        const link = document.querySelector(`link[rel="preload"][href="${p.mockupSrc}"]`);
+        if (link) link.remove();
+      });
+    };
+  }, []);
+
   const goStep = (dir: 1 | -1) => {
     if (animating) return;
     directionRef.current = dir;
@@ -368,6 +385,7 @@ export default function ProjectsSection() {
                     className="object-cover"
                     sizes="100vw"
                     priority
+                    unoptimized
                   />
                 </div>
               )}
@@ -379,6 +397,7 @@ export default function ProjectsSection() {
                   className="object-cover"
                   sizes="100vw"
                   priority
+                  unoptimized
                 />
               </div>
             </div>
