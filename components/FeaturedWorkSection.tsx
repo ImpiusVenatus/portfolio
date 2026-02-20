@@ -18,9 +18,9 @@ const RIGHT_ROTATION = 14;
 
 export default function FeaturedWorkSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
-  const centerCardRef = useRef<HTMLDivElement | null>(null);
-  const leftCardRef = useRef<HTMLDivElement | null>(null);
-  const rightCardRef = useRef<HTMLDivElement | null>(null);
+  const centerCardRef = useRef<HTMLAnchorElement | null>(null);
+  const leftCardRef = useRef<HTMLAnchorElement | null>(null);
+  const rightCardRef = useRef<HTMLAnchorElement | null>(null);
   const textWrapRef = useRef<HTMLDivElement | null>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
   const hasPlayedRef = useRef(false);
@@ -186,34 +186,44 @@ export default function FeaturedWorkSection() {
 
       {/* Cards container — single card on mobile, three on desktop */}
       <div className="relative flex items-center justify-center w-full max-w-6xl h-[300px] sm:h-[340px] md:h-[420px] lg:h-[480px]">
-        <div
+        <a
           ref={centerCardRef}
-          className="absolute z-10 w-[260px] h-[300px] sm:w-[300px] sm:h-[340px] md:w-[360px] md:h-[440px] rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-border-subtle bg-foreground/5"
+          href="https://lifestoryapp.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="absolute z-10 w-[260px] h-[300px] sm:w-[300px] sm:h-[340px] md:w-[360px] md:h-[440px] rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-border-subtle bg-foreground/5 block"
+          aria-label="Lifestory — open site"
         >
           <img
-            src="https://images.unsplash.com/photo-1545127398-14699f92334b?w=720&q=80"
-            alt="Featured app"
+            src="/featured/featured-1.png"
+            alt="Lifestory app"
             className="w-full h-full object-cover"
           />
-        </div>
+        </a>
 
-        <div
+        <a
           ref={leftCardRef}
+          href="https://buckyy.com"
+          target="_blank"
+          rel="noopener noreferrer"
           className="hidden md:block absolute z-0 w-[280px] h-[360px] lg:w-[320px] lg:h-[400px] rounded-2xl overflow-hidden shadow-xl border border-border-subtle bg-foreground/5"
           style={{ transformOrigin: "center center" }}
-          aria-hidden
+          aria-label="Buckyy — open site"
         >
-          <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=640&q=80" alt="" className="w-full h-full object-cover" />
-        </div>
+          <img src="/featured/featured-2.png" alt="" className="w-full h-full object-cover" />
+        </a>
 
-        <div
+        <a
           ref={rightCardRef}
+          href="https://buckyy.com/rini"
+          target="_blank"
+          rel="noopener noreferrer"
           className="hidden md:block absolute z-0 w-[280px] h-[360px] lg:w-[320px] lg:h-[400px] rounded-2xl overflow-hidden shadow-xl border border-border-subtle bg-foreground/5"
           style={{ transformOrigin: "center center" }}
-          aria-hidden
+          aria-label="Rini — open site"
         >
-          <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=640&q=80" alt="" className="w-full h-full object-cover" />
-        </div>
+          <img src="/featured/featured-3.png" alt="" className="w-full h-full object-cover" />
+        </a>
       </div>
 
       <div ref={textWrapRef} className="relative z-20 mt-6 sm:mt-8 md:mt-12 text-center max-w-xl mx-auto px-2">
