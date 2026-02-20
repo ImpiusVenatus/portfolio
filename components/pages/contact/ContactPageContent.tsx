@@ -7,7 +7,6 @@ import TransitionLink from "@/components/TransitionLink";
 import { dmMono } from "@/app/layout";
 
 const EMAIL = "hossainsadman39@gmail.com";
-const ENTRY_DELAY_MS = 120;
 const ENTRY_DURATION = 0.55;
 const ENTRY_STAGGER = 0.12;
 
@@ -22,7 +21,7 @@ export default function ContactPageContent() {
 
     gsap.set([leftEl, formWrap], { autoAlpha: 0, y: 20 });
 
-    const tl = gsap.timeline({ delay: ENTRY_DELAY_MS / 1000 });
+    const tl = gsap.timeline();
     tl.to(leftEl, {
       autoAlpha: 1,
       y: 0,

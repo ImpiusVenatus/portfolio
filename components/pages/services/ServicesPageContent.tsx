@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useLayoutEffect, useRef } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -94,8 +94,8 @@ export default function ServicesPageContent() {
   const progressLineRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
 
-  // Intro: title words and subtitle animate in on load
-  useEffect(() => {
+  // Intro: title and subtitle animate in on load (useLayoutEffect so animation starts before paint, reducing perceived delay after nav transition)
+  useLayoutEffect(() => {
     const title = titleRef.current;
     const subtitle = subtitleRef.current;
     if (!title || !subtitle) return;

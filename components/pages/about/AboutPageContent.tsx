@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { MapPin, Mail, Phone, ChevronDown } from "lucide-react";
@@ -135,11 +135,33 @@ const TIMELINE_ITEMS: {
 
 export default function AboutPageContent() {
   const headerRef = useRef<HTMLDivElement | null>(null);
+  const detailsBlockRef = useRef<HTMLDivElement | null>(null);
   const timelineSectionRef = useRef<HTMLDivElement | null>(null);
   const lineRef = useRef<HTMLDivElement | null>(null);
   const itemRowRefs = useRef<(HTMLLIElement | null)[]>([]);
   const backLinkRef = useRef<HTMLDivElement | null>(null);
   const aboutWordRefs = useRef<(HTMLSpanElement | null)[]>([]);
+
+  // Build and play entry animation (words first, then details). Called when header enters view or on load if already in view.
+  const playHeaderEntry = useCallback(() => {
+    const headerEl = headerRef.current;
+    const detailsBlock = detailsBlockRef.current;
+    const words = aboutWordRefs.current.filter(Boolean) as HTMLElement[];
+    if (!headerEl) return;
+
+    gsap.set(headerEl, { autoAlpha: 0, y: 24 });
+    if (detailsBlock) gsap.set(detailsBlock, { autoAlpha: 0, y: 20 });
+    words.forEach((el) => gsap.set(el, { opacity: 0, y: 20 }));
+
+    const entryTl = gsap.timeline();
+    entryTl.to(headerEl, { autoAlpha: 1, y: 0, duration: 0.35, ease: "power2.out" }, 0);
+    words.forEach((el, i) => {
+      entryTl.to(el, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 0.15 + 0.5 + i * 0.15);
+    });
+    if (detailsBlock) {
+      entryTl.to(detailsBlock, { autoAlpha: 1, y: 0, duration: ENTRY_DURATION, ease: "power2.out" }, 1.35);
+    }
+  }, []);
 
   useEffect(() => {
     const headerEl = headerRef.current;
@@ -149,48 +171,42 @@ export default function AboutPageContent() {
     const backEl = backLinkRef.current;
     if (!headerEl) return;
 
-    // Header: entry when in view, exit when scrolling back up
+    // Initial hidden state so we don't flash content before animation
     gsap.set(headerEl, { autoAlpha: 0, y: 24 });
-    const headerIn = gsap.to(headerEl, {
-      autoAlpha: 1,
-      y: 0,
-      duration: ENTRY_DURATION,
-      ease: "power2.out",
-      paused: true,
-    });
-    // Header words: simple stagger fade + slide-up (different from footer)
+    const detailsBlock = detailsBlockRef.current;
+    if (detailsBlock) gsap.set(detailsBlock, { autoAlpha: 0, y: 20 });
     const words = aboutWordRefs.current.filter(Boolean) as HTMLElement[];
-    let wordsTl: gsap.core.Timeline | null = null;
-    if (words.length >= 3) {
-      gsap.set(words, { opacity: 0, y: 20 });
-      wordsTl = gsap.timeline({ paused: true });
-      words.forEach((el, i) => {
-        wordsTl!.to(el, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 0.5 + i * 0.15);
-      });
-    }
+    words.forEach((el) => gsap.set(el, { opacity: 0, y: 20 }));
 
     const stHeaderEnter = ScrollTrigger.create({
       trigger: headerEl,
-      start: "top 82%",
-      onEnter: () => {
-        headerIn.play();
-        wordsTl?.play();
-      },
+      start: "top 85%",
+      onEnter: () => playHeaderEntry(),
     });
     const stHeaderExit = ScrollTrigger.create({
       trigger: headerEl,
       start: "top 85%",
       onLeaveBack: () => gsap.to(headerEl, { autoAlpha: 0, y: -16, duration: EXIT_DURATION, ease: "power2.in" }),
     });
-    // If header is already in view on load, play entry
-    requestAnimationFrame(() => {
-      if (headerEl.getBoundingClientRect().top < window.innerHeight * 0.85) {
-        headerIn.play();
-        wordsTl?.play();
-      }
+
+    // If header is already in view on load, play after refs are committed (next frame)
+    let cancelled = false;
+    const rafId = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (!cancelled && headerEl.getBoundingClientRect().top < window.innerHeight) {
+          playHeaderEntry();
+        }
+      });
     });
 
-    if (!sectionEl || !lineEl) return;
+    if (!sectionEl || !lineEl) {
+      return () => {
+        cancelled = true;
+        cancelAnimationFrame(rafId);
+        stHeaderEnter.kill();
+        stHeaderExit.kill();
+      };
+    }
 
     const LOGO_STAGGER = 0.06;
     const CONTENT_SLIDE_DUR = 0.35;
@@ -243,13 +259,14 @@ export default function AboutPageContent() {
     });
 
     return () => {
+      cancelled = true;
+      cancelAnimationFrame(rafId);
       scrollTrigger.kill();
       stHeaderEnter.kill();
       stHeaderExit.kill();
-      headerIn.kill();
       scrubTl.kill();
     };
-  }, []);
+  }, [playHeaderEntry]);
 
   return (
     <div className="w-full max-w-4xl mx-auto text-left">
@@ -261,7 +278,7 @@ export default function AboutPageContent() {
         <div className="mt-2">
           <div className="h-px bg-foreground/15 w-full" aria-hidden />
           <div className="flex flex-col gap-2 md:gap-3">
-            <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+            <div className="flex flex-wrap items-baseline gap-x-8 gap-y-1">
               <span
                 ref={(el) => { aboutWordRefs.current[0] = el; }}
                 className={`inline-block opacity-0 text-foreground/90 ${raderFont.className}`}
@@ -287,51 +304,53 @@ export default function AboutPageContent() {
           </div>
           <div className="h-px bg-foreground/15 w-full mt-2" aria-hidden />
         </div>
-        <div className="flex flex-col gap-2 text-foreground/60 text-sm md:text-base">
-          <span className="flex items-center gap-2">
-            <MapPin className="shrink-0 w-4 h-4 text-foreground/50" aria-hidden />
-            Dhaka, Bangladesh
-          </span>
-          <span className="flex items-center gap-2">
-            <Mail className="shrink-0 w-4 h-4 text-foreground/50" aria-hidden />
-            josephitesadman56@gmail.com
-          </span>
-          <span className="flex items-center gap-2">
-            <Phone className="shrink-0 w-4 h-4 text-foreground/50" aria-hidden />
-            +8801717158743
-          </span>
+        <div ref={detailsBlockRef} className="space-y-0">
+          <div className="flex flex-col gap-2 text-foreground/60 text-sm md:text-base">
+            <span className="flex items-center gap-2">
+              <MapPin className="shrink-0 w-4 h-4 text-foreground/50" aria-hidden />
+              Dhaka, Bangladesh
+            </span>
+            <span className="flex items-center gap-2">
+              <Mail className="shrink-0 w-4 h-4 text-foreground/50" aria-hidden />
+              josephitesadman56@gmail.com
+            </span>
+            <span className="flex items-center gap-2">
+              <Phone className="shrink-0 w-4 h-4 text-foreground/50" aria-hidden />
+              +8801717158743
+            </span>
+          </div>
+          <p className="text-foreground/70 text-lg leading-relaxed max-w-2xl mt-4">
+            Software Engineer specializing in fintech and applied AI, building real-world products across digital credit, remittance and diaspora services. I design and ship production systems end-to-end—from backend architectures and frontend designs to mobile apps deployed to the Play Store and App Store.
+          </p>
+          <a
+            href={RESUME_URL}
+            download="Sadman-Hossain-Resume.pdf"
+            className={`group relative mt-10 inline-flex items-center justify-center gap-2 text-text-muted hover:text-foreground transition-colors duration-200 ${dmMono.className} tracking-widest text-xs`}
+          >
+            <span className="pointer-events-none absolute -left-4 top-1/2 -translate-y-1/2 opacity-0 -translate-x-1 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0">
+              <Image
+                src="/icons/hero-bracket.svg"
+                alt=""
+                width={6}
+                height={6}
+                className="opacity-90 invert dark:invert-0"
+              />
+            </span>
+            <span>DOWNLOAD RESUME</span>
+            <span className="inline-block text-foreground/60 transition-transform duration-300 ease-out group-hover:rotate-[360deg] group-hover:scale-110">
+              ↗
+            </span>
+            <span className="pointer-events-none absolute -right-4 top-1/2 -translate-y-1/2 opacity-0 translate-x-1 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0">
+              <Image
+                src="/icons/hero-bracket.svg"
+                alt=""
+                width={6}
+                height={6}
+                className="opacity-90 rotate-180 invert dark:invert-0"
+              />
+            </span>
+          </a>
         </div>
-        <p className="text-foreground/70 text-lg leading-relaxed max-w-2xl">
-          Software Engineer specializing in fintech and applied AI, building real-world products across digital credit, remittance and diaspora services. I design and ship production systems end-to-end—from backend architectures and frontend designs to mobile apps deployed to the Play Store and App Store.
-        </p>
-        <a
-          href={RESUME_URL}
-          download="Sadman-Hossain-Resume.pdf"
-          className={`group relative mt-10 inline-flex items-center justify-center gap-2 text-text-muted hover:text-foreground transition-colors duration-200 ${dmMono.className} tracking-widest text-xs`}
-        >
-          <span className="pointer-events-none absolute -left-4 top-1/2 -translate-y-1/2 opacity-0 -translate-x-1 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0">
-            <Image
-              src="/icons/hero-bracket.svg"
-              alt=""
-              width={6}
-              height={6}
-              className="opacity-90 invert dark:invert-0"
-            />
-          </span>
-          <span>DOWNLOAD RESUME</span>
-          <span className="inline-block text-foreground/60 transition-transform duration-300 ease-out group-hover:rotate-[360deg] group-hover:scale-110">
-            ↗
-          </span>
-          <span className="pointer-events-none absolute -right-4 top-1/2 -translate-y-1/2 opacity-0 translate-x-1 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0">
-            <Image
-              src="/icons/hero-bracket.svg"
-              alt=""
-              width={6}
-              height={6}
-              className="opacity-90 rotate-180 invert dark:invert-0"
-            />
-          </span>
-        </a>
       </div>
 
       <div ref={timelineSectionRef} className="relative">
