@@ -305,23 +305,37 @@ export default function AboutPageContent() {
           <div className="h-px bg-foreground/15 w-full mt-2" aria-hidden />
         </div>
         <div ref={detailsBlockRef} className="space-y-0">
-          <div className="flex flex-col gap-2 text-foreground/60 text-sm md:text-base">
-            <span className="flex items-center gap-2">
-              <MapPin className="shrink-0 w-4 h-4 text-foreground/50" aria-hidden />
-              Dhaka, Bangladesh
-            </span>
-            <span className="flex items-center gap-2">
-              <Mail className="shrink-0 w-4 h-4 text-foreground/50" aria-hidden />
-              hossainsadman39@gmail.com
-            </span>
-            <span className="flex items-center gap-2">
-              <Phone className="shrink-0 w-4 h-4 text-foreground/50" aria-hidden />
-              +8801717158743
-            </span>
+          <div className="flex flex-col md:flex-row md:items-start gap-8 md:gap-10">
+            <div className="relative mx-auto md:mx-0 w-[min(100%,240px)] md:w-[280px] aspect-[3/4] shrink-0 overflow-hidden rounded-sm border border-foreground/10">
+              <Image
+                src="/sadman-hossain.jpg"
+                alt="Sadman Hossain"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 240px, 280px"
+                priority
+              />
+            </div>
+            <div className="flex-1 min-w-0 space-y-4">
+              <div className="flex flex-col gap-2 text-foreground/60 text-sm md:text-base">
+                <span className="flex items-center gap-2">
+                  <MapPin className="shrink-0 w-4 h-4 text-foreground/50" aria-hidden />
+                  Dhaka, Bangladesh
+                </span>
+                <span className="flex items-center gap-2">
+                  <Mail className="shrink-0 w-4 h-4 text-foreground/50" aria-hidden />
+                  hossainsadman39@gmail.com
+                </span>
+                <span className="flex items-center gap-2">
+                  <Phone className="shrink-0 w-4 h-4 text-foreground/50" aria-hidden />
+                  +8801717158743
+                </span>
+              </div>
+              <p className="text-foreground/70 text-lg leading-relaxed max-w-2xl">
+                Software Engineer specializing in fintech and applied AI, building real-world products across digital credit, remittance and diaspora services. I design and ship production systems end-to-end—from backend architectures and frontend designs to mobile apps deployed to the Play Store and App Store.
+              </p>
+            </div>
           </div>
-          <p className="text-foreground/70 text-lg leading-relaxed max-w-2xl mt-4">
-            Software Engineer specializing in fintech and applied AI, building real-world products across digital credit, remittance and diaspora services. I design and ship production systems end-to-end—from backend architectures and frontend designs to mobile apps deployed to the Play Store and App Store.
-          </p>
           <a
             href={RESUME_URL}
             download="Sadman-Hossain-Resume.pdf"
