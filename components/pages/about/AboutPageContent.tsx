@@ -312,7 +312,7 @@ export default function AboutPageContent() {
             </span>
             <span className="flex items-center gap-2">
               <Mail className="shrink-0 w-4 h-4 text-foreground/50" aria-hidden />
-              josephitesadman56@gmail.com
+              hossainsadman39@gmail.com
             </span>
             <span className="flex items-center gap-2">
               <Phone className="shrink-0 w-4 h-4 text-foreground/50" aria-hidden />
