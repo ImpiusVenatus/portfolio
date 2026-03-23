@@ -60,10 +60,10 @@ export default function ContactPageContent() {
           <a href={`mailto:${EMAIL}`} className="text-text-muted hover:text-foreground transition-colors uppercase">
             {EMAIL}
           </a>
-          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+          <a href="https://www.instagram.com/impius_venatus" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
             INSTAGRAM
           </a>
-          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+          <a href="https://www.linkedin.com/in/sadman-hossain-6504482a1/" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
             LINKEDIN
           </a>
         </div>

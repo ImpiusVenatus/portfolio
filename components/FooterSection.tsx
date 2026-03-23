@@ -230,10 +230,10 @@ export default function FooterSection() {
               {EMAIL}
             </a>
             <div className="flex flex-col gap-2 lg:items-end">
-              <a ref={instagramRef} href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+              <a ref={instagramRef} href="https://www.instagram.com/impius_venatus" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
                 INSTAGRAM
               </a>
-              <a ref={linkedinRef} href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+              <a ref={linkedinRef} href="https://www.linkedin.com/in/sadman-hossain-6504482a1/" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
                 LINKEDIN
               </a>
             </div>
