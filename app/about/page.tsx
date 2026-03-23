@@ -1,6 +1,16 @@
 import Navbar from "@/components/Navbar";
 import AboutPageContent from "@/components/pages/about/AboutPageContent";
 import FooterSection from "@/components/FooterSection";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About",
+  description:
+    "Learn more about Sadman Hossain, a full stack web developer in Bangladesh focused on fintech, applied AI, and product engineering.",
+  alternates: {
+    canonical: "/about",
+  },
+};
 
 export default function AboutPage() {
   return (

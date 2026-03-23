@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import ContactForm from "@/components/pages/contact/ContactForm";
 import TransitionLink from "@/components/TransitionLink";
-import { dmMono } from "@/app/layout";
+import { dmMono } from "@/app/fonts";
 
 const EMAIL = "hossainsadman39@gmail.com";
 const ENTRY_DURATION = 0.55;

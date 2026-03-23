@@ -4,7 +4,7 @@ import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "re
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { dmMono, spaceGrotesk } from "@/app/layout";
+import { dmMono, spaceGrotesk } from "@/app/fonts";
 
 gsap.registerPlugin(ScrollTrigger);
 

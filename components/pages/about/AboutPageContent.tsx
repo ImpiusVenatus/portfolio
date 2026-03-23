@@ -6,7 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { MapPin, Mail, Phone, ChevronDown } from "lucide-react";
 import TransitionLink from "@/components/TransitionLink";
-import { dmMono, raderFont } from "@/app/layout";
+import { dmMono, raderFont } from "@/app/fonts";
 
 gsap.registerPlugin(ScrollTrigger);
 

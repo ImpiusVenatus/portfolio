@@ -1,5 +1,15 @@
 import Navbar from "@/components/Navbar";
 import ContactPageContent from "@/components/pages/contact/ContactPageContent";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Contact",
+  description:
+    "Contact Sadman Hossain for full stack web development projects, product engineering, and software consulting in Bangladesh.",
+  alternates: {
+    canonical: "/contact",
+  },
+};
 
 export default function ContactPage() {
   return (

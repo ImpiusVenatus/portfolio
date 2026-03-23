@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { dmMono, spaceGrotesk } from "@/app/layout";
+import { dmMono, spaceGrotesk } from "@/app/fonts";
 import { Compare } from "./ui/compare";
 import AnimatedTitle from "./AnimatedTitle";
 import { IconSparkles } from "@tabler/icons-react";

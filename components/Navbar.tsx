@@ -4,7 +4,7 @@ import Image from "next/image";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import { PanelRightClose, PanelLeftOpen } from "lucide-react";
-import { dmMono } from "@/app/layout";
+import { dmMono } from "@/app/fonts";
 import { usePageTransition } from "./PageTransitionProvider";
 import TransitionLink from "./TransitionLink";
 import { HamburgerMenuOverlay, type MenuItem } from "./lightswind/hamburger-menu-overlay";

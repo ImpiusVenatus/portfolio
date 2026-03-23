@@ -5,7 +5,7 @@ import Image from "next/image";
  import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/FooterSection";
-import { dmMono, spaceGrotesk } from "@/app/layout";
+import { dmMono, spaceGrotesk } from "@/app/fonts";
 
 export default function AppscanProjectPage() {
   const [modalSrc, setModalSrc] = useState<null | string>(null);

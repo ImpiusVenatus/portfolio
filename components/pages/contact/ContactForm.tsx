@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { dmMono } from "@/app/layout";
+import { dmMono } from "@/app/fonts";
 
 export default function ContactForm() {
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");

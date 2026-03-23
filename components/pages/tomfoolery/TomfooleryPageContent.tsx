@@ -3,7 +3,7 @@
 import Image from "next/image";
  import React, { useLayoutEffect, useRef } from "react";
  import gsap from "gsap";
- import { dmMono, spaceGrotesk } from "@/app/layout";
+import { dmMono, spaceGrotesk } from "@/app/fonts";
 import TransitionLink from "@/components/TransitionLink";
 
  const TAGLINE = "SIDE QUESTS · ODDITIES · PLAYGROUND BUILDS";

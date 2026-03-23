@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { dmMono, spaceGrotesk } from "@/app/layout";
+import { dmMono, spaceGrotesk } from "@/app/fonts";
 
 gsap.registerPlugin(ScrollTrigger);
 

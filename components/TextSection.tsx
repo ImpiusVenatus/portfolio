@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { manrope } from "@/app/layout";
+import { manrope } from "@/app/fonts";
 
 const LINE_STAGGER = 0.22;
 const VIEWPORT_DELAY = 0.4;

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { dmMono, raderFont } from "@/app/layout";
+import { dmMono, raderFont } from "@/app/fonts";
 import TransitionLink from "./TransitionLink";
 
 gsap.registerPlugin(ScrollTrigger);
